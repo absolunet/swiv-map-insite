@@ -4,18 +4,18 @@ const path = require('path');
 
 const distFolderName = 'dist';
 const distFileName = `${__dirname.split(path.sep).pop()}.js`;
+const coreName = 'swiv-core';
+
 
 mix.setPublicPath(distFolderName)
     .webpackConfig({
         resolve: {
             alias: {
-                'google-enhanced-ecommerce-angularjs': path.resolve(__dirname, '..', 'google-enhanced-ecommerce-angularjs'),
-                'google-enhanced-ecommerce-core': path.resolve(__dirname, '..', 'google-enhanced-ecommerce-core'),
+                [coreName]: path.resolve(__dirname, '..', coreName),
             }
         }
     })
     .js('index.js', distFileName)
-    .sourceMaps()
     .then(() => {
         const manifestPath = path.resolve(__dirname, distFolderName, 'mix-manifest.json');
         if (fs.existsSync(manifestPath)) {

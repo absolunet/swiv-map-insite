@@ -9,11 +9,10 @@ module.exports = class InsiteMapperService {
             'ProductDataModel': new ProductDataModelMapper(),
             'PromotionDataModel': new PromotionDataModelMapper(),
             'ActionFieldDataModel': new ActionFieldDataModel()
-        }
+        };        
     }
 
     map(data, event) {
-        const dataType = event.getMainDataType().name;
         const mapper = this.getDedicatedMapper(event.getMainDataType().name);
 
         if (mapper) {

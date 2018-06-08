@@ -3,15 +3,27 @@ const AbstractInsiteMapper = require('./abstract/mapper');
 module.exports = class InsiteProductDataModelMapper extends AbstractInsiteMapper {
 
     map(data) {
-        return {
-            id: data.id,
-            name: data.name,
+        return (data.products || [data.product]).map((productDto) => {
+            return this.mapOne(productDto);
+        });
+    }
+
+    mapOne(productDto, data = {}) {
+        const product = {
+            id: productDto.id,
+            name: productDto.name,
             list: 'Detail Page',
-            brand: data.properties.brand || '',
-            category: data.properties.category || '',
+            brand: productDto.properties.brand || '',
+            category: productDto.properties.category || '',
             variant: '',
             position: 1,
-            price: data.pricing.unitListPrice
+            price: productDto.pricing.unitListPrice
         };
+
+        Object.keys(data).forEach((k) => {
+            product[k] = data[k];
+        });
+
+        return product;
     }
 }
