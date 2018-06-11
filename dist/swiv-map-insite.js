@@ -77,9 +77,14 @@ module.exports = function () {
     }
 
     _createClass(AbstractInsiteMapper, [{
-        key: "map",
+        key: 'map',
         value: function map(data) {
             return data;
+        }
+    }, {
+        key: 'getModelName',
+        value: function getModelName() {
+            return this.constructor.name.replace(/^Insite(.*)Mapper$/, '$1');
         }
     }]);
 
@@ -103,32 +108,39 @@ __webpack_require__(3);
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
+__webpack_require__(4);
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
 if (window.swiv && window.swiv.gee) {
-    var InsiteMapperService = __webpack_require__(4);
+    var InsiteMapperService = __webpack_require__(5);
     window.swiv.gee.setMapperService(new InsiteMapperService());
 }
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ActionFieldDataModel = __webpack_require__(5);
-var PromotionDataModelMapper = __webpack_require__(6);
-var ProductDataModelMapper = __webpack_require__(7);
-
 module.exports = function () {
     function InsiteMapperService() {
+        var _this = this;
+
         _classCallCheck(this, InsiteMapperService);
 
-        this.mappers = {
-            'ProductDataModel': new ProductDataModelMapper(),
-            'PromotionDataModel': new PromotionDataModelMapper(),
-            'ActionFieldDataModel': new ActionFieldDataModel()
-        };
+        var mappers = [__webpack_require__(6), __webpack_require__(7), __webpack_require__(8)];
+
+        this.mappers = {};
+
+        mappers.forEach(function (Mapper) {
+            var mapper = new Mapper();
+            _this.mappers[mapper.getModelName()] = mapper;
+        });
     }
 
     _createClass(InsiteMapperService, [{
@@ -153,7 +165,7 @@ module.exports = function () {
 }();
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -186,7 +198,7 @@ module.exports = function (_AbstractInsiteMapper) {
 }(AbstractInsiteMapper);
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -219,7 +231,7 @@ module.exports = function (_AbstractInsiteMapper) {
 }(AbstractInsiteMapper);
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -246,7 +258,7 @@ module.exports = function (_AbstractInsiteMapper) {
         value: function map(data) {
             var _this2 = this;
 
-            return (data.products || [data.product]).map(function (productDto) {
+            return (data.products || [data.product || data]).map(function (productDto) {
                 return _this2.mapOne(productDto);
             });
         }

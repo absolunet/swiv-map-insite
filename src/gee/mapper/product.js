@@ -3,7 +3,7 @@ const AbstractInsiteMapper = require('./abstract/mapper');
 module.exports = class InsiteProductDataModelMapper extends AbstractInsiteMapper {
 
     map(data) {
-        return (data.products || [data.product]).map((productDto) => {
+        return (data.products || [data.product || data]).map((productDto) => {
             return this.mapOne(productDto);
         });
     }
