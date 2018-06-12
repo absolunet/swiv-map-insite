@@ -1,10 +1,11 @@
 module.exports = class AbstractInsiteMapper {
 
-    map(data) {
-        return data;
-    }
+	map(data) {
+		return data;
+	}
 
-    getModelName() {
-        return this.constructor.name.replace(/^Insite(.*)Mapper$/, '$1');
-    }
+	getModelName() {
+		return this.constructor.name.replace(/^Insite(.*)Mapper$/, '$1');
+	}
+
 };

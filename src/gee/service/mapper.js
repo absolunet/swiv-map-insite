@@ -1,31 +1,32 @@
 module.exports = class InsiteMapperService {
 
-    constructor() {
-        const mappers = [
-            require('./../mapper/action-field'),
-            require('./../mapper/promotion'),
-            require('./../mapper/product')
-        ];
+	constructor() {
+		const mappers = [
+			require('./../mapper/action-field'),
+			require('./../mapper/promotion'),
+			require('./../mapper/product')
+		];
 
-        this.mappers = {};
+		this.mappers = {};
 
-        mappers.forEach((Mapper) => {
-            const mapper = new Mapper();
-            this.mappers[mapper.getModelName()] = mapper;
-        });
-    }
+		mappers.forEach((Mapper) => {
+			const mapper = new Mapper();
+			this.mappers[mapper.getModelName()] = mapper;
+		});
+	}
 
-    map(data, event) {
-        const mapper = this.getDedicatedMapper(event.getMainDataType().name);
+	map(data, event) {
+		const mapper = this.getDedicatedMapper(event.getMainDataType().name);
 
-        if (mapper) {
-            event.setMainData(mapper.map(data));
-        }
+		if (mapper) {
+			event.setMainData(mapper.map(data));
+		}
 
-        return event.getData();
-    }
+		return event.getData();
+	}
 
-    getDedicatedMapper(event) {
-        return this.mappers[event] || null;
-    }
-}
+	getDedicatedMapper(event) {
+		return this.mappers[event] || null;
+	}
+
+};

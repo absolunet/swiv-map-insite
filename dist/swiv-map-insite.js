@@ -72,23 +72,23 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 module.exports = function () {
-    function AbstractInsiteMapper() {
-        _classCallCheck(this, AbstractInsiteMapper);
-    }
+	function AbstractInsiteMapper() {
+		_classCallCheck(this, AbstractInsiteMapper);
+	}
 
-    _createClass(AbstractInsiteMapper, [{
-        key: 'map',
-        value: function map(data) {
-            return data;
-        }
-    }, {
-        key: 'getModelName',
-        value: function getModelName() {
-            return this.constructor.name.replace(/^Insite(.*)Mapper$/, '$1');
-        }
-    }]);
+	_createClass(AbstractInsiteMapper, [{
+		key: 'map',
+		value: function map(data) {
+			return data;
+		}
+	}, {
+		key: 'getModelName',
+		value: function getModelName() {
+			return this.constructor.name.replace(/^Insite(.*)Mapper$/, '$1');
+		}
+	}]);
 
-    return AbstractInsiteMapper;
+	return AbstractInsiteMapper;
 }();
 
 /***/ }),
@@ -115,8 +115,8 @@ __webpack_require__(4);
 /***/ (function(module, exports, __webpack_require__) {
 
 if (window.swiv && window.swiv.gee) {
-    var InsiteMapperService = __webpack_require__(5);
-    window.swiv.gee.setMapperService(new InsiteMapperService());
+	var InsiteMapperService = __webpack_require__(5);
+	window.swiv.gee.setMapperService(new InsiteMapperService());
 }
 
 /***/ }),
@@ -128,40 +128,40 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 module.exports = function () {
-    function InsiteMapperService() {
-        var _this = this;
+	function InsiteMapperService() {
+		var _this = this;
 
-        _classCallCheck(this, InsiteMapperService);
+		_classCallCheck(this, InsiteMapperService);
 
-        var mappers = [__webpack_require__(6), __webpack_require__(7), __webpack_require__(8)];
+		var mappers = [__webpack_require__(6), __webpack_require__(7), __webpack_require__(8)];
 
-        this.mappers = {};
+		this.mappers = {};
 
-        mappers.forEach(function (Mapper) {
-            var mapper = new Mapper();
-            _this.mappers[mapper.getModelName()] = mapper;
-        });
-    }
+		mappers.forEach(function (Mapper) {
+			var mapper = new Mapper();
+			_this.mappers[mapper.getModelName()] = mapper;
+		});
+	}
 
-    _createClass(InsiteMapperService, [{
-        key: 'map',
-        value: function map(data, event) {
-            var mapper = this.getDedicatedMapper(event.getMainDataType().name);
+	_createClass(InsiteMapperService, [{
+		key: 'map',
+		value: function map(data, event) {
+			var mapper = this.getDedicatedMapper(event.getMainDataType().name);
 
-            if (mapper) {
-                event.setMainData(mapper.map(data));
-            }
+			if (mapper) {
+				event.setMainData(mapper.map(data));
+			}
 
-            return event.getData();
-        }
-    }, {
-        key: 'getDedicatedMapper',
-        value: function getDedicatedMapper(event) {
-            return this.mappers[event] || null;
-        }
-    }]);
+			return event.getData();
+		}
+	}, {
+		key: 'getDedicatedMapper',
+		value: function getDedicatedMapper(event) {
+			return this.mappers[event] || null;
+		}
+	}]);
 
-    return InsiteMapperService;
+	return InsiteMapperService;
 }();
 
 /***/ }),
@@ -179,22 +179,22 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var AbstractInsiteMapper = __webpack_require__(0);
 
 module.exports = function (_AbstractInsiteMapper) {
-    _inherits(InsiteActionFieldDataModelMapper, _AbstractInsiteMapper);
+	_inherits(InsiteActionFieldDataModelMapper, _AbstractInsiteMapper);
 
-    function InsiteActionFieldDataModelMapper() {
-        _classCallCheck(this, InsiteActionFieldDataModelMapper);
+	function InsiteActionFieldDataModelMapper() {
+		_classCallCheck(this, InsiteActionFieldDataModelMapper);
 
-        return _possibleConstructorReturn(this, (InsiteActionFieldDataModelMapper.__proto__ || Object.getPrototypeOf(InsiteActionFieldDataModelMapper)).apply(this, arguments));
-    }
+		return _possibleConstructorReturn(this, (InsiteActionFieldDataModelMapper.__proto__ || Object.getPrototypeOf(InsiteActionFieldDataModelMapper)).apply(this, arguments));
+	}
 
-    _createClass(InsiteActionFieldDataModelMapper, [{
-        key: 'map',
-        value: function map(data) {
-            return data;
-        }
-    }]);
+	_createClass(InsiteActionFieldDataModelMapper, [{
+		key: 'map',
+		value: function map(data) {
+			return data;
+		}
+	}]);
 
-    return InsiteActionFieldDataModelMapper;
+	return InsiteActionFieldDataModelMapper;
 }(AbstractInsiteMapper);
 
 /***/ }),
@@ -212,22 +212,22 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var AbstractInsiteMapper = __webpack_require__(0);
 
 module.exports = function (_AbstractInsiteMapper) {
-    _inherits(InsitePromotionDataModelMapper, _AbstractInsiteMapper);
+	_inherits(InsitePromotionDataModelMapper, _AbstractInsiteMapper);
 
-    function InsitePromotionDataModelMapper() {
-        _classCallCheck(this, InsitePromotionDataModelMapper);
+	function InsitePromotionDataModelMapper() {
+		_classCallCheck(this, InsitePromotionDataModelMapper);
 
-        return _possibleConstructorReturn(this, (InsitePromotionDataModelMapper.__proto__ || Object.getPrototypeOf(InsitePromotionDataModelMapper)).apply(this, arguments));
-    }
+		return _possibleConstructorReturn(this, (InsitePromotionDataModelMapper.__proto__ || Object.getPrototypeOf(InsitePromotionDataModelMapper)).apply(this, arguments));
+	}
 
-    _createClass(InsitePromotionDataModelMapper, [{
-        key: 'map',
-        value: function map(data) {
-            return data;
-        }
-    }]);
+	_createClass(InsitePromotionDataModelMapper, [{
+		key: 'map',
+		value: function map(data) {
+			return data;
+		}
+	}]);
 
-    return InsitePromotionDataModelMapper;
+	return InsitePromotionDataModelMapper;
 }(AbstractInsiteMapper);
 
 /***/ }),
@@ -245,48 +245,48 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var AbstractInsiteMapper = __webpack_require__(0);
 
 module.exports = function (_AbstractInsiteMapper) {
-    _inherits(InsiteProductDataModelMapper, _AbstractInsiteMapper);
+	_inherits(InsiteProductDataModelMapper, _AbstractInsiteMapper);
 
-    function InsiteProductDataModelMapper() {
-        _classCallCheck(this, InsiteProductDataModelMapper);
+	function InsiteProductDataModelMapper() {
+		_classCallCheck(this, InsiteProductDataModelMapper);
 
-        return _possibleConstructorReturn(this, (InsiteProductDataModelMapper.__proto__ || Object.getPrototypeOf(InsiteProductDataModelMapper)).apply(this, arguments));
-    }
+		return _possibleConstructorReturn(this, (InsiteProductDataModelMapper.__proto__ || Object.getPrototypeOf(InsiteProductDataModelMapper)).apply(this, arguments));
+	}
 
-    _createClass(InsiteProductDataModelMapper, [{
-        key: 'map',
-        value: function map(data) {
-            var _this2 = this;
+	_createClass(InsiteProductDataModelMapper, [{
+		key: 'map',
+		value: function map(data) {
+			var _this2 = this;
 
-            return (data.products || [data.product || data]).map(function (productDto) {
-                return _this2.mapOne(productDto);
-            });
-        }
-    }, {
-        key: 'mapOne',
-        value: function mapOne(productDto) {
-            var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+			return (data.products || [data.product || data]).map(function (productDto) {
+				return _this2.mapOne(productDto);
+			});
+		}
+	}, {
+		key: 'mapOne',
+		value: function mapOne(productDto) {
+			var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-            var product = {
-                id: productDto.id,
-                name: productDto.name,
-                list: 'Detail Page',
-                brand: productDto.properties.brand || '',
-                category: productDto.properties.category || '',
-                variant: '',
-                position: 1,
-                price: productDto.pricing.unitListPrice
-            };
+			var product = {
+				id: productDto.id,
+				name: productDto.name,
+				list: 'Detail Page',
+				brand: productDto.properties.brand || '',
+				category: productDto.properties.category || '',
+				variant: '',
+				position: 1,
+				price: productDto.pricing.unitListPrice
+			};
 
-            Object.keys(data).forEach(function (k) {
-                product[k] = data[k];
-            });
+			Object.keys(data).forEach(function (k) {
+				product[k] = data[k];
+			});
 
-            return product;
-        }
-    }]);
+			return product;
+		}
+	}]);
 
-    return InsiteProductDataModelMapper;
+	return InsiteProductDataModelMapper;
 }(AbstractInsiteMapper);
 
 /***/ })
