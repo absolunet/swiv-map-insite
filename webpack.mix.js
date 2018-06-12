@@ -5,7 +5,7 @@ const path = require('path');
 require('laravel-mix-eslint');
 
 const distFolderName = 'dist';
-const distFileName = `${__dirname.split(path.sep).pop()}.js`;
+const distFileName = `${__dirname.split(path.sep).pop()}${mix.inProduction() ? '.min' : ''}.js`;
 const coreName = 'swiv-core';
 
 
