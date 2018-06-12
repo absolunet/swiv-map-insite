@@ -1,5 +1,5 @@
 # Google Enhanced Ecommerce
-[_Swiv Map services - Insite_](../../) > [_Wiki_](../)
+[_Swiv Map services - Insite_](../../readme.md) > [_Wiki_](../)
 
 - Google Enhanced Ecommerce
     - [Services](services)

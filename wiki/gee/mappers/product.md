@@ -1,5 +1,5 @@
 # Product mapper
-[_Swiv Map services - Insite_](../../../) > [_Wiki_](../../) > [_Google Enhanced Ecommerce_](../) > [_Mappers_](readme.md)
+[_Swiv Map services - Insite_](../../../readme.md) > [_Wiki_](../../) > [_Google Enhanced Ecommerce_](../) > [_Mappers_](readme.md)
 
 - [Google Enhanced Ecommerce](../)
     - [Services](../services)

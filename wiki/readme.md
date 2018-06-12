@@ -1,5 +1,5 @@
 # Wiki
-[_Swiv Map services - Insite_](../)
+[_Swiv Map services - Insite_](../readme.md)
 
 - [Google Enhanced Ecommerce](gee)
     - [Services](gee/services)
