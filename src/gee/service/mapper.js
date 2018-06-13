@@ -17,12 +17,15 @@ module.exports = class InsiteMapperService {
 
 	map(data, event) {
 		const mapper = this.getDedicatedMapper(event.getMainDataType().name);
+		const mappedData = mapper ? mapper.map(data) : data;
 
-		if (mapper) {
-			event.setMainData(mapper.map(data));
+		if (mappedData && (mappedData.constructor !== Array || mappedData.length > 0)) {
+			event.setMainData(mappedData);
+
+			return event.getData();
 		}
 
-		return event.getData();
+		return null;
 	}
 
 	getDedicatedMapper(event) {

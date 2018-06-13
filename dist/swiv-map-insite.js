@@ -147,12 +147,15 @@ module.exports = function () {
 		key: 'map',
 		value: function map(data, event) {
 			var mapper = this.getDedicatedMapper(event.getMainDataType().name);
+			var mappedData = mapper ? mapper.map(data) : data;
 
-			if (mapper) {
-				event.setMainData(mapper.map(data));
+			if (mappedData && (mappedData.constructor !== Array || mappedData.length > 0)) {
+				event.setMainData(mappedData);
+
+				return event.getData();
 			}
 
-			return event.getData();
+			return null;
 		}
 	}, {
 		key: 'getDedicatedMapper',
