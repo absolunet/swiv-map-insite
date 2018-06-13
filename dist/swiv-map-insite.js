@@ -258,8 +258,15 @@ module.exports = function (_AbstractInsiteMapper) {
 		value: function map(data) {
 			var _this2 = this;
 
-			return (data.products || [data.product || data]).map(function (productDto) {
-				return _this2.mapOne(productDto);
+			var page = data.pagination ? data.pagination.currentPage : 1;
+			var perPage = data.pagination ? data.pagination.pageSize : 1;
+
+			return (data.products || [data.product || data]).map(function (productDto, i) {
+				return _this2.mapOne(productDto, {
+					position: (page - 1) * perPage + i + 1,
+					list: _this2.getListContext(data),
+					category: _this2.getCategory(productDto, data)
+				});
 			});
 		}
 	}, {
@@ -269,11 +276,11 @@ module.exports = function (_AbstractInsiteMapper) {
 
 			var product = {
 				id: productDto.id,
-				name: productDto.name,
-				list: 'Detail Page',
+				name: productDto.shortDescription,
+				list: this.getListContext(),
 				brand: productDto.properties.brand || '',
 				category: productDto.properties.category || '',
-				variant: '',
+				variant: productDto.name || productDto.shortDescription,
 				position: 1,
 				price: productDto.pricing.unitListPrice
 			};
@@ -282,7 +289,62 @@ module.exports = function (_AbstractInsiteMapper) {
 				product[k] = data[k];
 			});
 
+			Object.keys(product).forEach(function (k) {
+				if (typeof product[k] === 'undefined') {
+					delete product[k];
+				}
+			});
+
+			if (product.variant === product.name) {
+				delete product.variant;
+			}
+
+			if (product.price === 0) {
+				delete product.price;
+			}
+
 			return product;
+		}
+	}, {
+		key: 'getListContext',
+		value: function getListContext() {
+			var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+			if (data.products) {
+				return this.getListContextBySlug(data.originalQuery ? 'search' : 'list');
+			}
+
+			return this.getListContextBySlug('detail');
+		}
+	}, {
+		key: 'getCategory',
+		value: function getCategory(productDto) {
+			var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+			if (context.properties && context.properties.category) {
+				return context.properties.category.shortDescription;
+			}
+
+			var resolvedCategory = window.location.pathname.substr(1).replace(/-/g, ' ').split('/').map(function (category) {
+				return '' + category.charAt(0).toUpperCase() + category.slice(1);
+			}).join('/');
+
+			if (context.product) {
+				resolvedCategory = resolvedCategory.replace(/\/[^/]{1,}$/, '');
+			}
+
+			return resolvedCategory;
+		}
+	}, {
+		key: 'getListContextBySlug',
+		value: function getListContextBySlug(slug) {
+			var context = {
+				search: 'Search Results',
+				list: 'List Page',
+				detail: 'Detail Page'
+			};
+
+			return context[slug] || null;
 		}
 	}]);
 
