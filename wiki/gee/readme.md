@@ -3,7 +3,7 @@
 
 - Google Enhanced Ecommerce
     - [Services](services)
-        - [MapperService](service/mapper.md)
+        - [MapperService](services/mapper.md)
     - [Mappers](mappers)
         - [Product mapper](mappers/product.md)
         - [Promotion mapper](mappers/promotion.md)
