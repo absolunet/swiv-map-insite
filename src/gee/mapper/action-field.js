@@ -1,9 +1,10 @@
 const AbstractInsiteMapper = require('./abstract/mapper');
+const ActionFieldDataModel = require('swiv-core/src/gee/model/data/action-field');
 
 module.exports = class InsiteActionFieldDataModelMapper extends AbstractInsiteMapper {
 
-	map(data) {
-		return data;
+	getModel() {
+		return new ActionFieldDataModel();
 	}
 
 };

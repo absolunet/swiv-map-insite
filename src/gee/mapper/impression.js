@@ -1,10 +1,10 @@
 const AbstractInsiteMapper = require('./abstract/mapper');
-const ProductDataModel = require('swiv-core/src/gee/model/data/product');
+const ImpressionDataModel = require('swiv-core/src/gee/model/data/impression');
 
 module.exports = class InsiteProductDataModelMapper extends AbstractInsiteMapper {
 
 	getModel() {
-		return new ProductDataModel();
+		return new ImpressionDataModel();
 	}
 
 	getDataCollection(data) {
