@@ -1,3 +1,5 @@
 module.exports = (productImpressionDataModel, productDto) => {
-	productImpressionDataModel.brand = productDto.properties.brand;
+	if (productDto.properties) {
+		productImpressionDataModel.brand = productDto.properties.brand;
+	}
 };

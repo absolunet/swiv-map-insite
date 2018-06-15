@@ -1,3 +1,5 @@
 module.exports = (productImpressionDataModel, productDto) => {
-	productImpressionDataModel.price = productDto.pricing.unitListPrice || undefined;
+	if (productDto.pricing) {
+		productImpressionDataModel.price = productDto.pricing.unitListPrice || undefined;
+	}
 };
