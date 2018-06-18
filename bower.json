@@ -1,0 +1,29 @@
+{
+  "name": "swiv-map-insite",
+  "description": "Swiv mapper service to work with Insite Software API",
+  "main": "src/index.js",
+  "authors": [
+    "Thierry Parent",
+    "Absolunet"
+  ],
+  "dependencies": {
+    "swiv-core": "latest"
+  },
+  "license": "MIT",
+  "keywords": [
+    "swiv",
+    "mapper",
+    "insite",
+    "isc",
+    "api",
+    "absolunet"
+  ],
+  "homepage": "https://github.com/absolunet/swiv-map-insite",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
