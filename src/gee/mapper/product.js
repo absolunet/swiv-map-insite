@@ -1,5 +1,5 @@
 const AbstractInsiteMapper = require('./abstract/mapper');
-const ProductDataModel = require('swiv-core/src/gee/model/data/product');
+const ProductDataModel = require('swiv/src/gee/model/data/product');
 
 module.exports = class InsiteProductDataModelMapper extends AbstractInsiteMapper {
 

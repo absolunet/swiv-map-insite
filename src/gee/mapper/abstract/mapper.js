@@ -1,4 +1,4 @@
-const NotImplementedError = require('swiv-core/src/gee/error/not-implemented');
+const NotImplementedError = require('swiv/src/gee/error/not-implemented');
 
 module.exports = class AbstractInsiteMapper {
 
