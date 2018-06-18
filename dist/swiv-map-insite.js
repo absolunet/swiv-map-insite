@@ -1598,30 +1598,40 @@ module.exports = function (productImpressionDataModel, productDto, context) {
 /***/ (function(module, exports) {
 
 module.exports = function (productImpressionDataModel, productDto, context) {
-	var page = context.pagination ? context.pagination.currentPage : 1;
-	var perPage = context.pagination ? context.pagination.pageSize : 1;
-	var pos = 0;
+	delete productImpressionDataModel.position;
 
-	if (context.products) {
+	if (productDto.properties && productDto.properties.position) {
+		productImpressionDataModel.position = parseInt(productDto.properties.position, 10);
+	} else if (context.products) {
+		var page = context.pagination ? context.pagination.currentPage : 1;
+		var perPage = context.pagination ? context.pagination.pageSize : 1;
+		var pos = 0;
+
 		for (var i = context.products.length - 1; i >= 0; i--) {
 			if (context.products[i].id === productDto.id) {
 				pos = i;
 				break;
 			}
 		}
-	}
 
-	productImpressionDataModel.position = (page - 1) * perPage + pos + 1;
+		productImpressionDataModel.position = (page - 1) * perPage + pos + 1;
+	}
 };
 
 /***/ }),
 /* 41 */
 /***/ (function(module, exports) {
 
-module.exports = function (productImpressionDataModel, productDto) {
-	if (productDto.pricing) {
-		productImpressionDataModel.price = productDto.pricing.unitListPrice || undefined;
+var getPricing = function getPricing(productDto) {
+	if (productDto.pricing && productDto.pricing.unitListPrice && productDto.canShowPrice && productDto.canAddToCart) {
+		return productDto.pricing.unitListPrice.toFixed(2);
 	}
+
+	return undefined;
+};
+
+module.exports = function (productImpressionDataModel, productDto) {
+	productImpressionDataModel.price = getPricing(productDto);
 };
 
 /***/ }),

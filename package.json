@@ -1,15 +1,27 @@
 {
-  "name": "google-enhanced-ecommerce",
-  "version": "0.0.1",
-  "description": "Google Enhanced Ecommerce JavaScript core plugin with fluent API",
-  "definition": "Google Enhanced Ecommerce JS API",
-  "homepage": "",
+  "name": "swiv-map-insite",
+  "version": "1.0.0-alpha.2",
+  "description": "Swiv mapper service to work with Insite Software API",
+  "homepage": "https://github.com/absolunet/swiv-map-insite",
   "author": {
     "name": "Absolunet",
     "url": "https://absolunet.com/"
   },
+  "contributors": [
+    {
+      "name": "Thierry Parent",
+      "email": "tparent@absolunet.com"
+    },
+    {
+      "name": "Absolunet",
+      "url": "https://absolunet.com/"
+    }
+  ],
   "license": "MIT",
-  "repository": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/absolunet/swiv-map-insite.git"
+  },
   "bugs": {},
   "scripts": {
     "test": "ava",
