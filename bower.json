@@ -1,29 +1,47 @@
 {
   "name": "swiv-map-insite",
+  "version": "1.0.0-alpha.2",
   "description": "Swiv mapper service to work with Insite Software API",
-  "main": "src/index.js",
-  "authors": [
-    "Thierry Parent",
-    "Absolunet"
-  ],
-  "dependencies": {
-    "swiv-core": "latest"
+  "definition": "Swiv mapper service to work with Insite Software API",
+  "homepage": "https://github.com/absolunet/swiv-map-insite",
+  "main": "index.js",
+  "author": {
+    "name": "Absolunet",
+    "url": "https://absolunet.com"
   },
-  "license": "MIT",
   "keywords": [
     "swiv",
-    "mapper",
-    "insite",
-    "isc",
-    "api",
+    "analytics",
+    "datalayer",
+    "google",
+    "enhanced",
+    "ecommerce",
+    "tag",
+    "manager",
     "absolunet"
   ],
-  "homepage": "https://github.com/absolunet/swiv-map-insite",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/absolunet/swiv-map-insite.git"
+  },
+  "bugs": {
+    "url": "https://github.com/absolunet/swiv-map-insite/issues"
+  },
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
     "test",
-    "tests"
-  ]
+    "tests",
+    "docs",
+    "wiki",
+    ".editorconfig",
+    ".eslintrc.yaml",
+    ".gitignore",
+    ".travis.yml"
+  ],
+  "dependencies": {
+    "swiv": "^1.0.0-alpha.2"
+  }
 }
