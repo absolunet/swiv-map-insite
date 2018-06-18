@@ -7,16 +7,6 @@
     "name": "Absolunet",
     "url": "https://absolunet.com/"
   },
-  "contributors": [
-    {
-      "name": "Thierry Parent",
-      "email": "tparent@absolunet.com"
-    },
-    {
-      "name": "Absolunet",
-      "url": "https://absolunet.com/"
-    }
-  ],
   "license": "MIT",
   "repository": {
     "type": "git",
