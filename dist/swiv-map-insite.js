@@ -617,7 +617,7 @@ module.exports = function () {
 	}, {
 		key: 'getDedicatedMapper',
 		value: function getDedicatedMapper(event) {
-			return this.mappers[event] || this.mappers[event.getMainDataType().name] || null;
+			return this.mappers[event] || this.mappers[event.getMainDataType().modelName] || null;
 		}
 	}]);
 
