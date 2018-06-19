@@ -42,7 +42,7 @@ module.exports = class AbstractInsiteMapper {
 	}
 
 	getModelName() {
-		return this.getModel().constructor.name;
+		return this.getModel().modelName;
 	}
 
 	getDataCollection(data) {

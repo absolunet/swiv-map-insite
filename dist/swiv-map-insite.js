@@ -68,7 +68,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 const AbstractModel = __webpack_require__(8);
-const NotImplementedError = __webpack_require__(7).default;
+const NotImplementedError = __webpack_require__(4).default;
 const resolve = __webpack_require__(20);
 const filter = __webpack_require__(21);
 let _configs;
@@ -131,15 +131,11 @@ module.exports = class AbstractEventModel extends AbstractModel {
 	}
 
 	getEventName() {
-		return this.constructor.getEventName();
+		const cleanName = this.modelName.replace(/(Event)?Model$/, '');
+
+		return `${cleanName.charAt(0).toLowerCase()}${cleanName.slice(1)}`;
 	}
 
-};
-
-module.exports.getEventName = function() {
-	const name = this.eventName || this.name;
-
-	return name.replace(/(Event)?Model$/, '');
 };
 
 
@@ -147,9 +143,13 @@ module.exports.getEventName = function() {
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ImpressionDataModel = __webpack_require__(5);
+const ImpressionDataModel = __webpack_require__(6);
 
 module.exports = class ProductDataModel extends ImpressionDataModel {
+
+	static get modelName() {
+		return 'ProductDataModel';
+	}
 
 	getDefaultModelData() {
 		const data = super.getDefaultModelData();
@@ -176,7 +176,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var NotImplementedError = __webpack_require__(7);
+var NotImplementedError = __webpack_require__(4);
 
 module.exports = function () {
 	function AbstractInsiteMapper() {
@@ -231,7 +231,7 @@ module.exports = function () {
 	}, {
 		key: 'getModelName',
 		value: function getModelName() {
-			return this.getModel().constructor.name;
+			return this.getModel().modelName;
 		}
 	}, {
 		key: 'getDataCollection',
@@ -247,15 +247,33 @@ module.exports = function () {
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const AbstractDataModel = __webpack_require__(4);
+const AbstractDataModel = __webpack_require__(5);
 
 module.exports = class ActionFieldDataModel extends AbstractDataModel {
+
+	static get modelName() {
+		return 'ActionFieldDataModel';
+	}
 
 };
 
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports) {
+
+module.exports = class NotImplementedError extends Error {
+
+	constructor(method) {
+		// eslint-disable-next-line no-caller
+		super(`Method ${(method || arguments.callee.caller.name)}() must be implemented.`);
+	}
+
+};
+
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const AbstractModel = __webpack_require__(8);
@@ -270,12 +288,16 @@ module.exports = class AbstractDataModel extends AbstractModel {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const AbstractDataModel = __webpack_require__(4);
+const AbstractDataModel = __webpack_require__(5);
 
 module.exports = class ImpressionDataModel extends AbstractDataModel {
+
+	static get modelName() {
+		return 'ImpressionDataModel';
+	}
 
 	getDefaultModelData() {
 		return {
@@ -305,12 +327,16 @@ module.exports = class ImpressionDataModel extends AbstractDataModel {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const AbstractDataModel = __webpack_require__(4);
+const AbstractDataModel = __webpack_require__(5);
 
 module.exports = class PromotionDataModel extends AbstractDataModel {
+
+	static get modelName() {
+		return 'PromotionDataModel';
+	}
 
 	getDefaultModelData() {
 		return {
@@ -324,23 +350,9 @@ module.exports = class PromotionDataModel extends AbstractDataModel {
 	getRequiredFields() {
 		return {
 			id: (promotion, event) => {
-				return ['purchase', 'refund'].indexOf(event.getEventName()) !== -1;
+				return ['purchase', 'refund'].indexOf(event.modelName) !== -1;
 			}
 		};
-	}
-
-};
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-module.exports = class NotImplementedError extends Error {
-
-	constructor(method) {
-		// eslint-disable-next-line no-caller
-		super(`Method ${(method || arguments.callee.caller.name)}() must be implemented.`);
 	}
 
 };
@@ -350,9 +362,14 @@ module.exports = class NotImplementedError extends Error {
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
+const NotImplementedError = __webpack_require__(4);
 let _configs;
 
 module.exports = class AbstractModel {
+
+	static get modelName() {
+		throw new NotImplementedError();
+	}
 
 	constructor(data = {}) {
 		_configs = _configs || __webpack_require__(9);
@@ -406,6 +423,10 @@ module.exports = class AbstractModel {
 
 	getDefaultModelData() {
 		return {};
+	}
+
+	get modelName() {
+		return this.constructor.modelName;
 	}
 
 };
@@ -670,6 +691,10 @@ const AbstractEventModel = __webpack_require__(0);
 
 module.exports = class DefaultEventModel extends AbstractEventModel {
 
+	static get modelName() {
+		return 'DefaultEventModel';
+	}
+
 	getDefaultModelData() {
 		return {
 			ecommerce: {}
@@ -685,8 +710,6 @@ module.exports = class DefaultEventModel extends AbstractEventModel {
 	}
 
 };
-
-module.exports.eventName = 'DefaultEventModel';
 
 
 /***/ }),
@@ -729,6 +752,10 @@ const ProductModel = __webpack_require__(1);
 
 module.exports = class AddToCartEventModel extends AbstractEventModel {
 
+	static get modelName() {
+		return 'AddToCartEventModel';
+	}
+
 	getDefaultModelData() {
 		return {
 			event: 'addToCart',
@@ -751,8 +778,6 @@ module.exports = class AddToCartEventModel extends AbstractEventModel {
 
 };
 
-module.exports.eventName = 'AddToCartEventModel';
-
 
 /***/ }),
 /* 23 */
@@ -762,6 +787,10 @@ const AbstractEventModel = __webpack_require__(0);
 const ProductModel = __webpack_require__(1);
 
 module.exports = class CheckoutEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'CheckoutEventModel';
+	}
 
 	getDefaultModelData() {
 		return {
@@ -787,8 +816,6 @@ module.exports = class CheckoutEventModel extends AbstractEventModel {
 
 };
 
-module.exports.eventName = 'CheckoutEventModel';
-
 
 /***/ }),
 /* 24 */
@@ -798,6 +825,10 @@ const AbstractEventModel = __webpack_require__(0);
 const ActionFieldModel = __webpack_require__(3);
 
 module.exports = class CheckoutOptionEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'CheckoutOptionEventModel';
+	}
 
 	getDefaultModelData() {
 		return {
@@ -823,17 +854,19 @@ module.exports = class CheckoutOptionEventModel extends AbstractEventModel {
 
 };
 
-module.exports.eventName = 'CheckoutOptionEventModel';
-
 
 /***/ }),
 /* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const AbstractEventModel = __webpack_require__(0);
-const ImpressionDataModel = __webpack_require__(5);
+const ImpressionDataModel = __webpack_require__(6);
 
 module.exports = class ProductImpressionEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'ProductImpressionEventModel';
+	}
 
 	getDefaultModelData() {
 		return {
@@ -855,8 +888,6 @@ module.exports = class ProductImpressionEventModel extends AbstractEventModel {
 
 };
 
-module.exports.eventName = 'ProductImpressionEventModel';
-
 
 /***/ }),
 /* 26 */
@@ -866,6 +897,10 @@ const AbstractEventModel = __webpack_require__(0);
 const ProductModel = __webpack_require__(1);
 
 module.exports = class ProductClickEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'ProductClickEventModel';
+	}
 
 	getDefaultModelData() {
 		return {
@@ -890,8 +925,6 @@ module.exports = class ProductClickEventModel extends AbstractEventModel {
 
 };
 
-module.exports.eventName = 'ProductClickEventModel';
-
 
 /***/ }),
 /* 27 */
@@ -901,6 +934,10 @@ const AbstractEventModel = __webpack_require__(0);
 const ProductModel = __webpack_require__(1);
 
 module.exports = class ProductDetailEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'ProductDetailEventModel';
+	}
 
 	getDefaultModelData() {
 		return {
@@ -924,17 +961,19 @@ module.exports = class ProductDetailEventModel extends AbstractEventModel {
 
 };
 
-module.exports.eventName = 'ProductDetailEventModel';
-
 
 /***/ }),
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const AbstractEventModel = __webpack_require__(0);
-const PromotionModel = __webpack_require__(6);
+const PromotionModel = __webpack_require__(7);
 
 module.exports = class PromoClickEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'PromoClickEventModel';
+	}
 
 	getDefaultModelData() {
 		return {
@@ -958,17 +997,19 @@ module.exports = class PromoClickEventModel extends AbstractEventModel {
 
 };
 
-module.exports.eventName = 'PromoClickEventModel';
-
 
 /***/ }),
 /* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const AbstractEventModel = __webpack_require__(0);
-const PromotionModel = __webpack_require__(6);
+const PromotionModel = __webpack_require__(7);
 
 module.exports = class PromoViewEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'PromoViewEventModel';
+	}
 
 	getDefaultModelData() {
 		return {
@@ -991,8 +1032,6 @@ module.exports = class PromoViewEventModel extends AbstractEventModel {
 
 };
 
-module.exports.eventName = 'PromoViewEventModel';
-
 
 /***/ }),
 /* 30 */
@@ -1002,6 +1041,10 @@ const AbstractEventModel = __webpack_require__(0);
 const ActionFieldModel = __webpack_require__(3);
 
 module.exports = class PurchaseEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'PurchaseEventModel';
+	}
 
 	getDefaultModelData() {
 		return {
@@ -1024,8 +1067,6 @@ module.exports = class PurchaseEventModel extends AbstractEventModel {
 
 };
 
-module.exports.eventName = 'PurchaseEventModel';
-
 
 /***/ }),
 /* 31 */
@@ -1035,6 +1076,10 @@ const AbstractEventModel = __webpack_require__(0);
 const ActionFieldModel = __webpack_require__(3);
 
 module.exports = class RefundEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'RefundEventModel';
+	}
 
 	getDefaultModelData() {
 		return {
@@ -1057,8 +1102,6 @@ module.exports = class RefundEventModel extends AbstractEventModel {
 
 };
 
-module.exports.eventName = 'RefundEventModel';
-
 
 /***/ }),
 /* 32 */
@@ -1068,6 +1111,10 @@ const AbstractEventModel = __webpack_require__(0);
 const ProductModel = __webpack_require__(1);
 
 module.exports = class RemoveFromCartEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'RemoveFromCartEventModel';
+	}
 
 	getDefaultModelData() {
 		return {
@@ -1090,8 +1137,6 @@ module.exports = class RemoveFromCartEventModel extends AbstractEventModel {
 
 };
 
-module.exports.eventName = 'RemoveFromCartEventModel';
-
 
 /***/ }),
 /* 33 */
@@ -1112,7 +1157,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var AbstractInsiteMapper = __webpack_require__(2);
-var ImpressionDataModel = __webpack_require__(5);
+var ImpressionDataModel = __webpack_require__(6);
 
 module.exports = function (_AbstractInsiteMapper) {
 	_inherits(InsiteProductDataModelMapper, _AbstractInsiteMapper);
@@ -1272,7 +1317,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var AbstractInsiteMapper = __webpack_require__(2);
-var PromotionDataModel = __webpack_require__(6);
+var PromotionDataModel = __webpack_require__(7);
 
 module.exports = function (_AbstractInsiteMapper) {
 	_inherits(InsitePromotionDataModelMapper, _AbstractInsiteMapper);
