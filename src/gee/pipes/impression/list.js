@@ -5,5 +5,5 @@ module.exports = (productImpressionDataModel, productDto, context) => {
 		detail: 'Detail Page'
 	};
 
-	productImpressionDataModel.list = context.products ? lists[context.originalQuery ? 'search' : 'list'] : lists.detail;
+	productImpressionDataModel.list = context.list || (context.products ? lists[context.originalQuery ? 'search' : 'list'] : lists.detail);
 };
