@@ -8,7 +8,7 @@ module.exports = class InsiteProductDataModelMapper extends AbstractInsiteMapper
 	}
 
 	getDataCollection(data) {
-		return data.products || [data.product || data];
+		return data.products || (data instanceof Array ? data : [data.product || data]);
 	}
 
 };
