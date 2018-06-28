@@ -716,7 +716,7 @@ module.exports = class DefaultEventModel extends AbstractEventModel {
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+'use strict';
 
 
 module.exports = (path, obj = {}) => {
@@ -1176,7 +1176,7 @@ module.exports = function (_AbstractInsiteMapper) {
 	}, {
 		key: 'getDataCollection',
 		value: function getDataCollection(data) {
-			return data.products || [data.product || data];
+			return data.products || (data instanceof Array ? data : [data.product || data]);
 		}
 	}]);
 
@@ -1210,7 +1210,7 @@ module.exports = function (productImpressionDataModel, productDto, context) {
 		detail: 'Detail Page'
 	};
 
-	productImpressionDataModel.list = context.products ? lists[context.originalQuery ? 'search' : 'list'] : lists.detail;
+	productImpressionDataModel.list = context.list || (context.properties ? context.properties.list : null) || (context.products ? lists[context.originalQuery ? 'search' : 'list'] : lists.detail);
 };
 
 /***/ }),
