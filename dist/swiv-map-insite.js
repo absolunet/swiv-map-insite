@@ -67,6 +67,9 @@
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const AbstractModel = __webpack_require__(8);
 const NotImplementedError = __webpack_require__(4).default;
 const resolve = __webpack_require__(20);
@@ -142,6 +145,9 @@ module.exports = class AbstractEventModel extends AbstractModel {
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 const ImpressionDataModel = __webpack_require__(6);
 
@@ -247,6 +253,9 @@ module.exports = function () {
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const AbstractDataModel = __webpack_require__(5);
 
 module.exports = class ActionFieldDataModel extends AbstractDataModel {
@@ -260,7 +269,10 @@ module.exports = class ActionFieldDataModel extends AbstractDataModel {
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 module.exports = class NotImplementedError extends Error {
 
@@ -276,6 +288,9 @@ module.exports = class NotImplementedError extends Error {
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const AbstractModel = __webpack_require__(8);
 
 module.exports = class AbstractDataModel extends AbstractModel {
@@ -290,6 +305,9 @@ module.exports = class AbstractDataModel extends AbstractModel {
 /***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 const AbstractDataModel = __webpack_require__(5);
 
@@ -330,6 +348,9 @@ module.exports = class ImpressionDataModel extends AbstractDataModel {
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const AbstractDataModel = __webpack_require__(5);
 
 module.exports = class PromotionDataModel extends AbstractDataModel {
@@ -361,6 +382,9 @@ module.exports = class PromotionDataModel extends AbstractDataModel {
 /***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 const NotImplementedError = __webpack_require__(4);
 let _configs;
@@ -435,6 +459,9 @@ module.exports = class AbstractModel {
 /***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 const defaultConfigs = __webpack_require__(18);
 
@@ -662,6 +689,9 @@ module.exports = function (_AbstractInsiteMapper) {
 /* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 module.exports = {
 	dataLayer: 'dataLayer',
 	gtm: 'google_tag_manager',
@@ -686,6 +716,9 @@ module.exports = {
 /***/ }),
 /* 19 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 const AbstractEventModel = __webpack_require__(0);
 
@@ -716,7 +749,7 @@ module.exports = class DefaultEventModel extends AbstractEventModel {
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-'use strict';
+"use strict";
 
 
 module.exports = (path, obj = {}) => {
@@ -728,16 +761,19 @@ module.exports = (path, obj = {}) => {
 
 /***/ }),
 /* 21 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 module.exports = (obj, predicate) => {
 	const result = {};
 
-	for (const key in obj) {
+	Object.keys(obj).forEach((key) => {
 		if (predicate(obj[key], key)) {
 			result[key] = obj[key];
 		}
-	}
+	});
 
 	return result;
 };
@@ -746,6 +782,9 @@ module.exports = (obj, predicate) => {
 /***/ }),
 /* 22 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 const AbstractEventModel = __webpack_require__(0);
 const ProductModel = __webpack_require__(1);
@@ -782,6 +821,9 @@ module.exports = class AddToCartEventModel extends AbstractEventModel {
 /***/ }),
 /* 23 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 const AbstractEventModel = __webpack_require__(0);
 const ProductModel = __webpack_require__(1);
@@ -821,6 +863,9 @@ module.exports = class CheckoutEventModel extends AbstractEventModel {
 /* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const AbstractEventModel = __webpack_require__(0);
 const ActionFieldModel = __webpack_require__(3);
 
@@ -859,6 +904,9 @@ module.exports = class CheckoutOptionEventModel extends AbstractEventModel {
 /* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const AbstractEventModel = __webpack_require__(0);
 const ImpressionDataModel = __webpack_require__(6);
 
@@ -892,6 +940,9 @@ module.exports = class ProductImpressionEventModel extends AbstractEventModel {
 /***/ }),
 /* 26 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 const AbstractEventModel = __webpack_require__(0);
 const ProductModel = __webpack_require__(1);
@@ -930,6 +981,9 @@ module.exports = class ProductClickEventModel extends AbstractEventModel {
 /* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const AbstractEventModel = __webpack_require__(0);
 const ProductModel = __webpack_require__(1);
 
@@ -965,6 +1019,9 @@ module.exports = class ProductDetailEventModel extends AbstractEventModel {
 /***/ }),
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 const AbstractEventModel = __webpack_require__(0);
 const PromotionModel = __webpack_require__(7);
@@ -1002,6 +1059,9 @@ module.exports = class PromoClickEventModel extends AbstractEventModel {
 /* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const AbstractEventModel = __webpack_require__(0);
 const PromotionModel = __webpack_require__(7);
 
@@ -1036,6 +1096,9 @@ module.exports = class PromoViewEventModel extends AbstractEventModel {
 /***/ }),
 /* 30 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 const AbstractEventModel = __webpack_require__(0);
 const ActionFieldModel = __webpack_require__(3);
@@ -1072,6 +1135,9 @@ module.exports = class PurchaseEventModel extends AbstractEventModel {
 /* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const AbstractEventModel = __webpack_require__(0);
 const ActionFieldModel = __webpack_require__(3);
 
@@ -1106,6 +1172,9 @@ module.exports = class RefundEventModel extends AbstractEventModel {
 /***/ }),
 /* 32 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 const AbstractEventModel = __webpack_require__(0);
 const ProductModel = __webpack_require__(1);
