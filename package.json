@@ -1,6 +1,6 @@
 {
   "name": "swiv-map-insite",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "Swiv mapper service to work with Insite Software API",
   "homepage": "https://github.com/absolunet/swiv-map-insite",
   "author": {

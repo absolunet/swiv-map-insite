@@ -71,7 +71,7 @@
 
 
 const AbstractModel = __webpack_require__(8);
-const NotImplementedError = __webpack_require__(4).default;
+const NotImplementedError = __webpack_require__(3).default;
 const resolve = __webpack_require__(20);
 const filter = __webpack_require__(21);
 let _configs;
@@ -182,7 +182,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var NotImplementedError = __webpack_require__(4);
+var NotImplementedError = __webpack_require__(3);
 
 module.exports = function () {
 	function AbstractInsiteMapper() {
@@ -223,6 +223,11 @@ module.exports = function () {
 				pipeData.pipe(dataModel, rawData, context);
 			});
 
+			this.cleanDataModel(dataModel);
+		}
+	}, {
+		key: 'cleanDataModel',
+		value: function cleanDataModel(dataModel) {
 			Object.keys(dataModel).forEach(function (k) {
 				if (typeof dataModel[k] === 'undefined') {
 					delete dataModel[k];
@@ -256,12 +261,11 @@ module.exports = function () {
 "use strict";
 
 
-const AbstractDataModel = __webpack_require__(5);
+module.exports = class NotImplementedError extends Error {
 
-module.exports = class ActionFieldDataModel extends AbstractDataModel {
-
-	static get modelName() {
-		return 'ActionFieldDataModel';
+	constructor(method) {
+		// eslint-disable-next-line no-caller
+		super(`Method ${(method || arguments.callee.caller.name)}() must be implemented.`);
 	}
 
 };
@@ -274,11 +278,12 @@ module.exports = class ActionFieldDataModel extends AbstractDataModel {
 "use strict";
 
 
-module.exports = class NotImplementedError extends Error {
+const AbstractDataModel = __webpack_require__(5);
 
-	constructor(method) {
-		// eslint-disable-next-line no-caller
-		super(`Method ${(method || arguments.callee.caller.name)}() must be implemented.`);
+module.exports = class ActionFieldDataModel extends AbstractDataModel {
+
+	static get modelName() {
+		return 'ActionFieldDataModel';
 	}
 
 };
@@ -386,7 +391,7 @@ module.exports = class PromotionDataModel extends AbstractDataModel {
 "use strict";
 
 
-const NotImplementedError = __webpack_require__(4);
+const NotImplementedError = __webpack_require__(3);
 let _configs;
 
 module.exports = class AbstractModel {
@@ -664,7 +669,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var AbstractInsiteMapper = __webpack_require__(2);
-var ActionFieldDataModel = __webpack_require__(3);
+var ActionFieldDataModel = __webpack_require__(4);
 
 module.exports = function (_AbstractInsiteMapper) {
 	_inherits(InsiteActionFieldDataModelMapper, _AbstractInsiteMapper);
@@ -867,7 +872,7 @@ module.exports = class CheckoutEventModel extends AbstractEventModel {
 
 
 const AbstractEventModel = __webpack_require__(0);
-const ActionFieldModel = __webpack_require__(3);
+const ActionFieldModel = __webpack_require__(4);
 
 module.exports = class CheckoutOptionEventModel extends AbstractEventModel {
 
@@ -1101,7 +1106,7 @@ module.exports = class PromoViewEventModel extends AbstractEventModel {
 
 
 const AbstractEventModel = __webpack_require__(0);
-const ActionFieldModel = __webpack_require__(3);
+const ProductDataModel = __webpack_require__(1);
 
 module.exports = class PurchaseEventModel extends AbstractEventModel {
 
@@ -1114,18 +1119,19 @@ module.exports = class PurchaseEventModel extends AbstractEventModel {
 			event: 'purchase',
 			ecommerce: {
 				purchase: {
-					actionField: new ActionFieldModel()
+					actionField: {},
+					products: []
 				}
 			}
 		};
 	}
 
 	getMainDataKey() {
-		return 'ecommerce.purchase.actionField';
+		return 'ecommerce.purchase.products';
 	}
 
 	getMainDataType() {
-		return ActionFieldModel;
+		return ProductDataModel;
 	}
 
 };
@@ -1139,7 +1145,7 @@ module.exports = class PurchaseEventModel extends AbstractEventModel {
 
 
 const AbstractEventModel = __webpack_require__(0);
-const ActionFieldModel = __webpack_require__(3);
+const ActionFieldModel = __webpack_require__(4);
 
 module.exports = class RefundEventModel extends AbstractEventModel {
 
@@ -1219,6 +1225,8 @@ module.exports = [];
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -1246,6 +1254,14 @@ module.exports = function (_AbstractInsiteMapper) {
 		key: 'getDataCollection',
 		value: function getDataCollection(data) {
 			return data.products || (data instanceof Array ? data : [data.product || data]);
+		}
+	}, {
+		key: 'cleanDataModel',
+		value: function cleanDataModel(dataModel) {
+			_get(InsiteProductDataModelMapper.prototype.__proto__ || Object.getPrototypeOf(InsiteProductDataModelMapper.prototype), 'cleanDataModel', this).call(this, dataModel);
+			if (!dataModel.list) {
+				delete dataModel.list;
+			}
 		}
 	}]);
 
@@ -1279,7 +1295,7 @@ module.exports = function (productImpressionDataModel, productDto, context) {
 		detail: 'Detail Page'
 	};
 
-	productImpressionDataModel.list = context.list || (context.properties ? context.properties.list : null) || (context.products ? lists[context.originalQuery ? 'search' : 'list'] : lists.detail);
+	productImpressionDataModel.list = typeof context.list !== 'undefined' ? context.list : (context.properties ? context.properties.list : null) || (context.products ? lists[context.originalQuery ? 'search' : 'list'] : lists.detail);
 };
 
 /***/ }),
@@ -1350,7 +1366,7 @@ module.exports = function (productImpressionDataModel, productDto, context) {
 /***/ (function(module, exports) {
 
 var getPricing = function getPricing(productDto) {
-	if (productDto.pricing && productDto.pricing.unitListPrice && productDto.canShowPrice && productDto.canAddToCart) {
+	if (productDto.pricing && productDto.pricing.unitListPrice && (typeof productDto.canShowPrice === 'undefined' || productDto.canShowPrice) && productDto.canAddToCart) {
 		return productDto.pricing.unitListPrice.toFixed(2);
 	}
 
@@ -1462,9 +1478,20 @@ module.exports = __webpack_require__(10).concat([__webpack_require__(47), __webp
 /* 47 */
 /***/ (function(module, exports) {
 
-module.exports = function (productDataModel, productDto) {
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+module.exports = function (productDataModel, productDto, context) {
+	productDto.properties = productDto.properties || {};
 	if (productDataModel.price) {
-		productDataModel.quantity = productDto.quantity;
+		if (typeof productDataModel.quantity !== 'undefined') {
+			var _filter = [productDto.qtyAdded, productDto.qtyRemoved, productDto.properties.qtyAdded, productDto.properties.qtyRemoved, context.qtyAdded, context.qtyRemoved, productDto.qtyOrdered].filter(function (value) {
+				return typeof value !== 'undefined';
+			});
+
+			var _filter2 = _slicedToArray(_filter, 1);
+
+			productDataModel.quantity = _filter2[0];
+		}
 	} else {
 		delete productDataModel.quantity;
 	}
