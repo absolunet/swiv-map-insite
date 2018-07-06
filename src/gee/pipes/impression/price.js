@@ -1,5 +1,5 @@
 const getPricing = (productDto) => {
-	if (productDto.pricing && productDto.pricing.unitListPrice && productDto.canShowPrice && productDto.canAddToCart) {
+	if (productDto.pricing && productDto.pricing.unitListPrice && (typeof productDto.canShowPrice === 'undefined' || productDto.canShowPrice) && productDto.canAddToCart) {
 		return productDto.pricing.unitListPrice.toFixed(2);
 	}
 
