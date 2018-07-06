@@ -30,6 +30,10 @@ module.exports = class AbstractInsiteMapper {
 			pipeData.pipe(dataModel, rawData, context);
 		});
 
+		this.cleanDataModel(dataModel);
+	}
+
+	cleanDataModel(dataModel) {
 		Object.keys(dataModel).forEach((k) => {
 			if (typeof dataModel[k] === 'undefined') {
 				delete dataModel[k];
