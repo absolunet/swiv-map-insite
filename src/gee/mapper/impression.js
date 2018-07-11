@@ -11,6 +11,13 @@ module.exports = class InsiteProductDataModelMapper extends AbstractInsiteMapper
 		return data.products || (data instanceof Array ? data : [data.product || data]);
 	}
 
+	getMainDataKeys() {
+		return [
+			'products',
+			'product'
+		];
+	}
+
 	cleanDataModel(dataModel) {
 		super.cleanDataModel(dataModel);
 		if (!dataModel.list) {
