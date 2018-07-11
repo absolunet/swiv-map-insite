@@ -7,4 +7,8 @@ module.exports = class InsiteActionFieldDataModelMapper extends AbstractInsiteMa
 		return new ActionFieldDataModel();
 	}
 
+	getMappedData(data) {
+		return data;
+	}
+
 };
