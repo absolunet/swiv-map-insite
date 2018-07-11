@@ -36,10 +36,19 @@ module.exports = class InsiteMapperService {
 
 	map(data, event) {
 		const mapper = this.getDedicatedMapper(event);
-		const mappedData = mapper ? mapper.map(data) : data;
+		const mappedData = mapper ? mapper.getMappedData(data, event) : data;
 
 		if (mappedData && (mappedData.constructor !== Array || mappedData.length > 0)) {
-			event.setMainData(mappedData);
+			const mainData = mappedData.main || mappedData;
+			const miscData = mappedData.misc || null;
+
+			event.setMainData(mainData);
+
+			if (miscData) {
+				Object.keys(miscData).forEach((miscDataKey) => {
+					event.ecommerce[miscDataKey] = miscData[miscDataKey];
+				});
+			}
 
 			return event.getData();
 		}
