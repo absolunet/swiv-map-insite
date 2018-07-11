@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,10 +70,10 @@
 "use strict";
 
 
-const AbstractModel = __webpack_require__(8);
+const AbstractModel = __webpack_require__(9);
 const NotImplementedError = __webpack_require__(3).default;
-const resolve = __webpack_require__(20);
-const filter = __webpack_require__(21);
+const resolve = __webpack_require__(8);
+const filter = __webpack_require__(22);
 let _configs;
 
 module.exports = class AbstractEventModel extends AbstractModel {
@@ -81,7 +81,7 @@ module.exports = class AbstractEventModel extends AbstractModel {
 	constructor() {
 		super();
 		this.mainDataType = Object;
-		_configs = _configs || __webpack_require__(9);
+		_configs = _configs || __webpack_require__(10);
 	}
 
 	setMainData(data = {}) {
@@ -183,6 +183,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var NotImplementedError = __webpack_require__(3);
+var resolve = __webpack_require__(8);
 
 module.exports = function () {
 	function AbstractInsiteMapper() {
@@ -192,8 +193,30 @@ module.exports = function () {
 	}
 
 	_createClass(AbstractInsiteMapper, [{
-		key: 'map',
-		value: function map(data) {
+		key: 'getMappedData',
+		value: function getMappedData(data) {
+			var mainData = this.getMappedMainData(data);
+			var miscData = this.getMiscData(data);
+
+			var dataProps = data instanceof Array ? [] : Object.keys(data);
+			var miscDataProps = Object.keys(miscData);
+			var miscIsMain = dataProps.every(function (val) {
+				return miscDataProps.indexOf(val) > -1;
+			});
+
+			var mappedData = {
+				main: mainData
+			};
+
+			if (mainData instanceof Array || !miscIsMain) {
+				mappedData.misc = miscData;
+			}
+
+			return mappedData;
+		}
+	}, {
+		key: 'getMappedMainData',
+		value: function getMappedMainData(data) {
 			var _this = this;
 
 			var mappedData = [];
@@ -204,6 +227,26 @@ module.exports = function () {
 			});
 
 			return mappedData;
+		}
+	}, {
+		key: 'getMiscData',
+		value: function getMiscData(data) {
+			var clone = JSON.parse(JSON.stringify(data));
+
+			this.getMainDataKeys().forEach(function (key) {
+				var keyList = key.split('.');
+				var lastKey = keyList.pop();
+				var container = keyList.length ? resolve(keyList.join('.'), clone) || {} : clone;
+
+				delete container[lastKey];
+			});
+
+			return clone || {};
+		}
+	}, {
+		key: 'getMainDataKeys',
+		value: function getMainDataKeys() {
+			return [];
 		}
 	}, {
 		key: 'registerPipe',
@@ -296,7 +339,7 @@ module.exports = class ActionFieldDataModel extends AbstractDataModel {
 "use strict";
 
 
-const AbstractModel = __webpack_require__(8);
+const AbstractModel = __webpack_require__(9);
 
 module.exports = class AbstractDataModel extends AbstractModel {
 
@@ -391,6 +434,20 @@ module.exports = class PromotionDataModel extends AbstractDataModel {
 "use strict";
 
 
+module.exports = (path, obj = {}) => {
+	return path.split('.').reduce((prev, curr) => {
+		return prev ? prev[curr] : undefined;
+	}, obj);
+};
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 const NotImplementedError = __webpack_require__(3);
 let _configs;
 
@@ -401,7 +458,7 @@ module.exports = class AbstractModel {
 	}
 
 	constructor(data = {}) {
-		_configs = _configs || __webpack_require__(9);
+		_configs = _configs || __webpack_require__(10);
 		this.map(this.getDefaultModelData()).map(data);
 	}
 
@@ -462,13 +519,13 @@ module.exports = class AbstractModel {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const defaultConfigs = __webpack_require__(18);
+const defaultConfigs = __webpack_require__(20);
 
 const _config = {};
 
@@ -531,41 +588,95 @@ module.exports = configs;
 
 
 /***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = [__webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42)];
-
-/***/ }),
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(12);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var AbstractInsiteMapper = __webpack_require__(2);
+var ImpressionDataModel = __webpack_require__(6);
+
+module.exports = function (_AbstractInsiteMapper) {
+	_inherits(InsiteProductDataModelMapper, _AbstractInsiteMapper);
+
+	function InsiteProductDataModelMapper() {
+		_classCallCheck(this, InsiteProductDataModelMapper);
+
+		return _possibleConstructorReturn(this, (InsiteProductDataModelMapper.__proto__ || Object.getPrototypeOf(InsiteProductDataModelMapper)).apply(this, arguments));
+	}
+
+	_createClass(InsiteProductDataModelMapper, [{
+		key: 'getModel',
+		value: function getModel() {
+			return new ImpressionDataModel();
+		}
+	}, {
+		key: 'getDataCollection',
+		value: function getDataCollection(data) {
+			return data.products || (data instanceof Array ? data : [data.product || data]);
+		}
+	}, {
+		key: 'getMainDataKeys',
+		value: function getMainDataKeys() {
+			return ['products', 'product'];
+		}
+	}, {
+		key: 'cleanDataModel',
+		value: function cleanDataModel(dataModel) {
+			_get(InsiteProductDataModelMapper.prototype.__proto__ || Object.getPrototypeOf(InsiteProductDataModelMapper.prototype), 'cleanDataModel', this).call(this, dataModel);
+			if (!dataModel.list) {
+				delete dataModel.list;
+			}
+		}
+	}]);
+
+	return InsiteProductDataModelMapper;
+}(AbstractInsiteMapper);
 
 /***/ }),
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(13);
+module.exports = [__webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42)];
 
 /***/ }),
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(14);
+module.exports = __webpack_require__(14);
+
 
 /***/ }),
 /* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(15)();
+__webpack_require__(15);
 
 /***/ }),
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var InsiteMapperService = __webpack_require__(16);
+__webpack_require__(16);
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(17)();
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var InsiteMapperService = __webpack_require__(18);
 var hasBooted = false;
 
 var boot = function boot() {
@@ -580,7 +691,7 @@ window.addEventListener('swiv.gee.ready', boot);
 module.exports = boot;
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -594,11 +705,11 @@ module.exports = function () {
 		_classCallCheck(this, InsiteMapperService);
 
 		var mappers = [{
-			mapper: __webpack_require__(17),
-			defaultPipes: __webpack_require__(33)
+			mapper: __webpack_require__(19),
+			defaultPipes: __webpack_require__(34)
 		}, {
-			mapper: __webpack_require__(34),
-			defaultPipes: __webpack_require__(10)
+			mapper: __webpack_require__(11),
+			defaultPipes: __webpack_require__(12)
 		}, {
 			mapper: __webpack_require__(43),
 			defaultPipes: __webpack_require__(44)
@@ -625,10 +736,19 @@ module.exports = function () {
 		key: 'map',
 		value: function map(data, event) {
 			var mapper = this.getDedicatedMapper(event);
-			var mappedData = mapper ? mapper.map(data) : data;
+			var mappedData = mapper ? mapper.getMappedData(data, event) : data;
 
 			if (mappedData && (mappedData.constructor !== Array || mappedData.length > 0)) {
-				event.setMainData(mappedData);
+				var mainData = mappedData.main || mappedData;
+				var miscData = mappedData.misc || null;
+
+				event.setMainData(mainData);
+
+				if (miscData) {
+					Object.keys(miscData).forEach(function (miscDataKey) {
+						event.ecommerce[miscDataKey] = miscData[miscDataKey];
+					});
+				}
 
 				return event.getData();
 			}
@@ -657,7 +777,7 @@ module.exports = function () {
 }();
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -685,13 +805,18 @@ module.exports = function (_AbstractInsiteMapper) {
 		value: function getModel() {
 			return new ActionFieldDataModel();
 		}
+	}, {
+		key: 'getMappedData',
+		value: function getMappedData(data) {
+			return data;
+		}
 	}]);
 
 	return InsiteActionFieldDataModelMapper;
 }(AbstractInsiteMapper);
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -702,8 +827,7 @@ module.exports = {
 	gtm: 'google_tag_manager',
 	eventPrefix: 'swiv.gee.',
 	events: [
-		__webpack_require__(19),
-		__webpack_require__(22),
+		__webpack_require__(21),
 		__webpack_require__(23),
 		__webpack_require__(24),
 		__webpack_require__(25),
@@ -713,13 +837,14 @@ module.exports = {
 		__webpack_require__(29),
 		__webpack_require__(30),
 		__webpack_require__(31),
-		__webpack_require__(32)
+		__webpack_require__(32),
+		__webpack_require__(33)
 	]
 };
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -751,21 +876,7 @@ module.exports = class DefaultEventModel extends AbstractEventModel {
 
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = (path, obj = {}) => {
-	return path.split('.').reduce((prev, curr) => {
-		return prev ? prev[curr] : undefined;
-	}, obj);
-};
-
-
-/***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -785,7 +896,7 @@ module.exports = (obj, predicate) => {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -824,7 +935,7 @@ module.exports = class AddToCartEventModel extends AbstractEventModel {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -843,10 +954,7 @@ module.exports = class CheckoutEventModel extends AbstractEventModel {
 		return {
 			event: 'checkout',
 			ecommerce: {
-				actionField: {
-					step: 1,
-					option: this.getConfigRepository().get('defaultCreditCard', '')
-				},
+				actionField: {},
 				products: []
 			},
 			eventCallback: () => {} // eslint-disable-line no-empty-function
@@ -865,7 +973,7 @@ module.exports = class CheckoutEventModel extends AbstractEventModel {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -885,10 +993,7 @@ module.exports = class CheckoutOptionEventModel extends AbstractEventModel {
 			event: 'checkoutOption',
 			ecommerce: {
 				checkout_option: { // eslint-disable-line camelcase
-					actionField: {
-						step: 1,
-						option: this.getConfigRepository().get('defaultCreditCard', '')
-					}
+					actionField: {}
 				}
 			}
 		};
@@ -906,7 +1011,7 @@ module.exports = class CheckoutOptionEventModel extends AbstractEventModel {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -943,7 +1048,7 @@ module.exports = class ProductImpressionEventModel extends AbstractEventModel {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -983,7 +1088,7 @@ module.exports = class ProductClickEventModel extends AbstractEventModel {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1022,7 +1127,7 @@ module.exports = class ProductDetailEventModel extends AbstractEventModel {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1061,7 +1166,7 @@ module.exports = class PromoClickEventModel extends AbstractEventModel {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1099,7 +1204,7 @@ module.exports = class PromoViewEventModel extends AbstractEventModel {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1138,7 +1243,7 @@ module.exports = class PurchaseEventModel extends AbstractEventModel {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1176,7 +1281,7 @@ module.exports = class RefundEventModel extends AbstractEventModel {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1214,59 +1319,10 @@ module.exports = class RemoveFromCartEventModel extends AbstractEventModel {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports) {
 
 module.exports = [];
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var AbstractInsiteMapper = __webpack_require__(2);
-var ImpressionDataModel = __webpack_require__(6);
-
-module.exports = function (_AbstractInsiteMapper) {
-	_inherits(InsiteProductDataModelMapper, _AbstractInsiteMapper);
-
-	function InsiteProductDataModelMapper() {
-		_classCallCheck(this, InsiteProductDataModelMapper);
-
-		return _possibleConstructorReturn(this, (InsiteProductDataModelMapper.__proto__ || Object.getPrototypeOf(InsiteProductDataModelMapper)).apply(this, arguments));
-	}
-
-	_createClass(InsiteProductDataModelMapper, [{
-		key: 'getModel',
-		value: function getModel() {
-			return new ImpressionDataModel();
-		}
-	}, {
-		key: 'getDataCollection',
-		value: function getDataCollection(data) {
-			return data.products || (data instanceof Array ? data : [data.product || data]);
-		}
-	}, {
-		key: 'cleanDataModel',
-		value: function cleanDataModel(dataModel) {
-			_get(InsiteProductDataModelMapper.prototype.__proto__ || Object.getPrototypeOf(InsiteProductDataModelMapper.prototype), 'cleanDataModel', this).call(this, dataModel);
-			if (!dataModel.list) {
-				delete dataModel.list;
-			}
-		}
-	}]);
-
-	return InsiteProductDataModelMapper;
-}(AbstractInsiteMapper);
 
 /***/ }),
 /* 35 */
@@ -1289,13 +1345,7 @@ module.exports = function (productImpressionDataModel, productDto) {
 /***/ (function(module, exports) {
 
 module.exports = function (productImpressionDataModel, productDto, context) {
-	var lists = {
-		search: 'Search Results',
-		list: 'List Page',
-		detail: 'Detail Page'
-	};
-
-	productImpressionDataModel.list = typeof context.list !== 'undefined' ? context.list : (context.properties ? context.properties.list : null) || (context.products ? lists[context.originalQuery ? 'search' : 'list'] : lists.detail);
+	productImpressionDataModel.list = context.list || (context.properties ? context.properties.list : null);
 };
 
 /***/ }),
@@ -1441,11 +1491,11 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var AbstractInsiteMapper = __webpack_require__(2);
+var ImpressionMapper = __webpack_require__(11);
 var ProductDataModel = __webpack_require__(1);
 
-module.exports = function (_AbstractInsiteMapper) {
-	_inherits(InsiteProductDataModelMapper, _AbstractInsiteMapper);
+module.exports = function (_ImpressionMapper) {
+	_inherits(InsiteProductDataModelMapper, _ImpressionMapper);
 
 	function InsiteProductDataModelMapper() {
 		_classCallCheck(this, InsiteProductDataModelMapper);
@@ -1458,21 +1508,16 @@ module.exports = function (_AbstractInsiteMapper) {
 		value: function getModel() {
 			return new ProductDataModel();
 		}
-	}, {
-		key: 'getDataCollection',
-		value: function getDataCollection(data) {
-			return data.products || [data.product || data];
-		}
 	}]);
 
 	return InsiteProductDataModelMapper;
-}(AbstractInsiteMapper);
+}(ImpressionMapper);
 
 /***/ }),
 /* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(10).concat([__webpack_require__(47), __webpack_require__(48)]);
+module.exports = __webpack_require__(12).concat([__webpack_require__(47), __webpack_require__(48)]);
 
 /***/ }),
 /* 47 */
