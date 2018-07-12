@@ -45,15 +45,24 @@ module.exports = class InsiteMapperService {
 			event.setMainData(mainData);
 
 			if (miscData) {
-				Object.keys(miscData).forEach((miscDataKey) => {
-					event.ecommerce[miscDataKey] = miscData[miscDataKey];
-				});
+				this.merge(event.ecommerce, miscData);
 			}
 
 			return event.getData();
 		}
 
 		return null;
+	}
+
+	merge(target, data) {
+		Object.keys(data).forEach((key) => {
+			if (typeof data[key] === 'object' && data[key]) {
+				target[key] = target[key] || (data[key] instanceof Array ? [] : {});
+				this.merge(target[key], data[key]);
+			} else {
+				target[key] = data[key];
+			}
+		});
 	}
 
 	registerPipe(event, pipe, order = 0) {
