@@ -8,21 +8,23 @@ module.exports = class InsiteProductDataModelMapper extends AbstractInsiteMapper
 	}
 
 	getDataCollection(data) {
-		return data.products || (data instanceof Array ? data : [data.product || data]);
-	}
+		if (data.main) {
+			return data.main instanceof Array ? data.main : [data.main];
+		}
 
-	getMainDataKeys() {
-		return [
-			'products',
-			'product'
-		];
+		return data.products || (data instanceof Array ? data : [data.main || data.product || data]);
 	}
 
 	cleanDataModel(dataModel) {
 		super.cleanDataModel(dataModel);
+		this.cleanQuantity(dataModel);
 		if (!dataModel.list) {
 			delete dataModel.list;
 		}
+	}
+
+	cleanQuantity(dataModel) {
+		delete dataModel.quantity;
 	}
 
 };

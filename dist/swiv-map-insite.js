@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 13);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,9 +70,9 @@
 "use strict";
 
 
-const AbstractModel = __webpack_require__(9);
+const AbstractModel = __webpack_require__(8);
 const NotImplementedError = __webpack_require__(3).default;
-const resolve = __webpack_require__(8);
+const resolve = __webpack_require__(21);
 const filter = __webpack_require__(22);
 let _configs;
 
@@ -81,7 +81,7 @@ module.exports = class AbstractEventModel extends AbstractModel {
 	constructor() {
 		super();
 		this.mainDataType = Object;
-		_configs = _configs || __webpack_require__(10);
+		_configs = _configs || __webpack_require__(9);
 	}
 
 	setMainData(data = {}) {
@@ -183,7 +183,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var NotImplementedError = __webpack_require__(3);
-var resolve = __webpack_require__(8);
+// const resolve = require('swiv/src/utils/resolve');
 
 module.exports = function () {
 	function AbstractInsiteMapper() {
@@ -231,22 +231,12 @@ module.exports = function () {
 	}, {
 		key: 'getMiscData',
 		value: function getMiscData(data) {
-			var clone = JSON.parse(JSON.stringify(data));
-
-			this.getMainDataKeys().forEach(function (key) {
-				var keyList = key.split('.');
-				var lastKey = keyList.pop();
-				var container = keyList.length ? resolve(keyList.join('.'), clone) || {} : clone;
-
-				delete container[lastKey];
-			});
-
-			return clone || {};
+			return data.misc || {};
 		}
 	}, {
 		key: 'getMainDataKeys',
 		value: function getMainDataKeys() {
-			return [];
+			return ['main'];
 		}
 	}, {
 		key: 'registerPipe',
@@ -339,7 +329,7 @@ module.exports = class ActionFieldDataModel extends AbstractDataModel {
 "use strict";
 
 
-const AbstractModel = __webpack_require__(9);
+const AbstractModel = __webpack_require__(8);
 
 module.exports = class AbstractDataModel extends AbstractModel {
 
@@ -434,20 +424,6 @@ module.exports = class PromotionDataModel extends AbstractDataModel {
 "use strict";
 
 
-module.exports = (path, obj = {}) => {
-	return path.split('.').reduce((prev, curr) => {
-		return prev ? prev[curr] : undefined;
-	}, obj);
-};
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 const NotImplementedError = __webpack_require__(3);
 let _configs;
 
@@ -458,7 +434,7 @@ module.exports = class AbstractModel {
 	}
 
 	constructor(data = {}) {
-		_configs = _configs || __webpack_require__(10);
+		_configs = _configs || __webpack_require__(9);
 		this.map(this.getDefaultModelData()).map(data);
 	}
 
@@ -519,13 +495,13 @@ module.exports = class AbstractModel {
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const defaultConfigs = __webpack_require__(20);
+const defaultConfigs = __webpack_require__(19);
 
 const _config = {};
 
@@ -588,7 +564,7 @@ module.exports = configs;
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -621,20 +597,25 @@ module.exports = function (_AbstractInsiteMapper) {
 	}, {
 		key: 'getDataCollection',
 		value: function getDataCollection(data) {
-			return data.products || (data instanceof Array ? data : [data.product || data]);
-		}
-	}, {
-		key: 'getMainDataKeys',
-		value: function getMainDataKeys() {
-			return ['products', 'product'];
+			if (data.main) {
+				return data.main instanceof Array ? data.main : [data.main];
+			}
+
+			return data.products || (data instanceof Array ? data : [data.main || data.product || data]);
 		}
 	}, {
 		key: 'cleanDataModel',
 		value: function cleanDataModel(dataModel) {
 			_get(InsiteProductDataModelMapper.prototype.__proto__ || Object.getPrototypeOf(InsiteProductDataModelMapper.prototype), 'cleanDataModel', this).call(this, dataModel);
+			this.cleanQuantity(dataModel);
 			if (!dataModel.list) {
 				delete dataModel.list;
 			}
+		}
+	}, {
+		key: 'cleanQuantity',
+		value: function cleanQuantity(dataModel) {
+			delete dataModel.quantity;
 		}
 	}]);
 
@@ -642,17 +623,23 @@ module.exports = function (_AbstractInsiteMapper) {
 }(AbstractInsiteMapper);
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = [__webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42)];
 
 /***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(13);
+
+
+/***/ }),
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(14);
-
+__webpack_require__(14);
 
 /***/ }),
 /* 14 */
@@ -664,19 +651,13 @@ __webpack_require__(15);
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(16);
+__webpack_require__(16)();
 
 /***/ }),
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(17)();
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var InsiteMapperService = __webpack_require__(18);
+var InsiteMapperService = __webpack_require__(17);
 var hasBooted = false;
 
 var boot = function boot() {
@@ -691,7 +672,7 @@ window.addEventListener('swiv.gee.ready', boot);
 module.exports = boot;
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -707,11 +688,11 @@ module.exports = function () {
 		_classCallCheck(this, InsiteMapperService);
 
 		var mappers = [{
-			mapper: __webpack_require__(19),
+			mapper: __webpack_require__(18),
 			defaultPipes: __webpack_require__(34)
 		}, {
-			mapper: __webpack_require__(11),
-			defaultPipes: __webpack_require__(12)
+			mapper: __webpack_require__(10),
+			defaultPipes: __webpack_require__(11)
 		}, {
 			mapper: __webpack_require__(43),
 			defaultPipes: __webpack_require__(44)
@@ -791,7 +772,7 @@ module.exports = function () {
 }();
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -830,7 +811,7 @@ module.exports = function (_AbstractInsiteMapper) {
 }(AbstractInsiteMapper);
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -841,7 +822,7 @@ module.exports = {
 	gtm: 'google_tag_manager',
 	eventPrefix: 'swiv.gee.',
 	events: [
-		__webpack_require__(21),
+		__webpack_require__(20),
 		__webpack_require__(23),
 		__webpack_require__(24),
 		__webpack_require__(25),
@@ -858,7 +839,7 @@ module.exports = {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -886,6 +867,20 @@ module.exports = class DefaultEventModel extends AbstractEventModel {
 		return Object;
 	}
 
+};
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = (path, obj = {}) => {
+	return path.split('.').reduce((prev, curr) => {
+		return prev ? prev[curr] : undefined;
+	}, obj);
 };
 
 
@@ -1359,7 +1354,7 @@ module.exports = function (productImpressionDataModel, productDto) {
 /***/ (function(module, exports) {
 
 module.exports = function (productImpressionDataModel, productDto, context) {
-	productImpressionDataModel.list = context.list || (context.properties ? context.properties.list : null);
+	productImpressionDataModel.list = context.list || (context.common ? context.common.list : null) || (context.properties ? context.properties.list : null);
 };
 
 /***/ }),
@@ -1377,6 +1372,10 @@ module.exports = function (productImpressionDataModel, productDto) {
 /***/ (function(module, exports) {
 
 var resolveCategory = function resolveCategory(productDto, context) {
+	if (context.common && context.common.category) {
+		return context.common.category;
+	}
+
 	if (productDto.properties && productDto.properties.category) {
 		return productDto.properties.category;
 	}
@@ -1404,24 +1403,35 @@ module.exports = function (productImpressionDataModel, productDto, context) {
 /* 40 */
 /***/ (function(module, exports) {
 
+var getPositionFromPagination = function getPositionFromPagination(pagination, products, productDto) {
+	var page = pagination ? pagination.currentPage : 1;
+	var perPage = pagination ? pagination.pageSize : 1;
+	var pos = 0;
+
+	for (var i = products.length - 1; i >= 0; i--) {
+		if (products[i].id === productDto.id) {
+			pos = i;
+			break;
+		}
+	}
+
+	return (page - 1) * perPage + pos + 1;
+};
+
 module.exports = function (productImpressionDataModel, productDto, context) {
 	delete productImpressionDataModel.position;
-
-	if (productDto.properties && productDto.properties.position) {
-		productImpressionDataModel.position = parseInt(productDto.properties.position, 10);
+	if (context.common && context.common.position) {
+		productImpressionDataModel.position = context.common.position;
+	} else if (productDto.properties && productDto.properties.position) {
+		productImpressionDataModel.position = productDto.properties.position;
+	} else if (context.common && context.common.pagination) {
+		productImpressionDataModel.position = getPositionFromPagination(context.common.pagination, context.main, productDto);
 	} else if (context.products) {
-		var page = context.pagination ? context.pagination.currentPage : 1;
-		var perPage = context.pagination ? context.pagination.pageSize : 1;
-		var pos = 0;
+		productImpressionDataModel.position = getPositionFromPagination(context.pagination, context.products, productDto);
+	}
 
-		for (var i = context.products.length - 1; i >= 0; i--) {
-			if (context.products[i].id === productDto.id) {
-				pos = i;
-				break;
-			}
-		}
-
-		productImpressionDataModel.position = (page - 1) * perPage + pos + 1;
+	if (productImpressionDataModel.position) {
+		productImpressionDataModel.position = parseInt(productImpressionDataModel.position, 10);
 	}
 };
 
@@ -1505,7 +1515,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var ImpressionMapper = __webpack_require__(11);
+var ImpressionMapper = __webpack_require__(10);
 var ProductDataModel = __webpack_require__(1);
 
 module.exports = function (_ImpressionMapper) {
@@ -1522,6 +1532,11 @@ module.exports = function (_ImpressionMapper) {
 		value: function getModel() {
 			return new ProductDataModel();
 		}
+	}, {
+		key: 'cleanQuantity',
+		value: function cleanQuantity() {
+			// eslint-disable-line no-empty-function
+		}
 	}]);
 
 	return InsiteProductDataModelMapper;
@@ -1531,7 +1546,7 @@ module.exports = function (_ImpressionMapper) {
 /* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(12).concat([__webpack_require__(47), __webpack_require__(48)]);
+module.exports = __webpack_require__(11).concat([__webpack_require__(47), __webpack_require__(48)]);
 
 /***/ }),
 /* 47 */

@@ -7,4 +7,8 @@ module.exports = class InsiteProductDataModelMapper extends ImpressionMapper {
 		return new ProductDataModel();
 	}
 
+	cleanQuantity() {
+		// eslint-disable-line no-empty-function
+	}
+
 };

@@ -1,5 +1,5 @@
 const NotImplementedError = require('swiv/src/gee/error/not-implemented');
-const resolve = require('swiv/src/utils/resolve');
+// const resolve = require('swiv/src/utils/resolve');
 
 module.exports = class AbstractInsiteMapper {
 
@@ -40,21 +40,11 @@ module.exports = class AbstractInsiteMapper {
 	}
 
 	getMiscData(data) {
-		const clone = JSON.parse(JSON.stringify(data));
-
-		this.getMainDataKeys().forEach((key) => {
-			const keyList = key.split('.');
-			const lastKey = keyList.pop();
-			const container = keyList.length ? resolve(keyList.join('.'), clone) || {} : clone;
-
-			delete container[lastKey];
-		});
-
-		return clone || {};
+		return data.misc || {};
 	}
 
 	getMainDataKeys() {
-		return [];
+		return ['main'];
 	}
 
 	registerPipe(pipe, order = 0) {

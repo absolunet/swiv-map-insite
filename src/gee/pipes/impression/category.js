@@ -1,4 +1,8 @@
 const resolveCategory = (productDto, context) => {
+	if (context.common && context.common.category) {
+		return context.common.category;
+	}
+
 	if (productDto.properties && productDto.properties.category) {
 		return productDto.properties.category;
 	}
