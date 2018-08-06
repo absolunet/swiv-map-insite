@@ -7,8 +7,8 @@ module.exports = class AbstractInsiteMapper {
 		this.pipes = [];
 	}
 
-	getMappedData(data) {
-		const mainData = this.getMappedMainData(data);
+	getMappedData(data, event) {
+		const mainData = this.getMappedMainData(data, event);
 		const miscData = this.getMiscData(data);
 
 		const dataProps = data instanceof Array ? [] : Object.keys(data);
@@ -28,11 +28,11 @@ module.exports = class AbstractInsiteMapper {
 		return mappedData;
 	}
 
-	getMappedMainData(data) {
+	getMappedMainData(data, event) {
 		const mappedData = [];
 		this.getDataCollection(data).forEach((item) => {
 			const dataModel = this.getModel();
-			this.executePipeline(dataModel, item, data);
+			this.executePipeline(dataModel, item, data, event);
 			mappedData.push(dataModel.getData());
 		});
 
@@ -53,11 +53,11 @@ module.exports = class AbstractInsiteMapper {
 		return this;
 	}
 
-	executePipeline(dataModel, rawData, context) {
+	executePipeline(dataModel, ...args) {
 		this.pipes.sort((a, b) => {
 			return a.order > b.order;
 		}).forEach((pipeData) => {
-			pipeData.pipe(dataModel, rawData, context);
+			pipeData.pipe(dataModel, ...args);
 		});
 
 		this.cleanDataModel(dataModel);
