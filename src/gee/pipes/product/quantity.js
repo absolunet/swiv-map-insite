@@ -1,19 +1,19 @@
-module.exports = (productDataModel, productDto, context) => {
-	productDto.properties = productDto.properties || {};
-	if (productDataModel.price) {
-		if (typeof productDataModel.quantity !== 'undefined') {
-			[productDataModel.quantity] = [
-				productDto.qtyAdded,
-				productDto.qtyRemoved,
-				productDto.properties.qtyAdded,
-				productDto.properties.qtyRemoved,
-				context.qtyAdded,
-				context.qtyRemoved,
-				productDto.qtyOrdered
-			].filter((value) => {
-				return typeof value !== 'undefined';
-			});
-		}
+module.exports = (productDataModel, productDto, context, event) => {
+	const properties = productDto.properties || {};
+	if (['productClick', 'productDetail'].indexOf(event.event) === -1 &&
+		productDataModel.price &&
+		typeof productDataModel.quantity !== 'undefined') {
+		[productDataModel.quantity] = [
+			productDto.qtyAdded,
+			productDto.qtyRemoved,
+			properties.qtyAdded,
+			properties.qtyRemoved,
+			context.qtyAdded,
+			context.qtyRemoved,
+			productDto.qtyOrdered
+		].filter((value) => {
+			return typeof value !== 'undefined';
+		});
 	} else {
 		delete productDataModel.quantity;
 	}

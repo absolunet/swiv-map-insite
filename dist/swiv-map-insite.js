@@ -194,8 +194,8 @@ module.exports = function () {
 
 	_createClass(AbstractInsiteMapper, [{
 		key: 'getMappedData',
-		value: function getMappedData(data) {
-			var mainData = this.getMappedMainData(data);
+		value: function getMappedData(data, event) {
+			var mainData = this.getMappedMainData(data, event);
 			var miscData = this.getMiscData(data);
 
 			var dataProps = data instanceof Array ? [] : Object.keys(data);
@@ -216,13 +216,13 @@ module.exports = function () {
 		}
 	}, {
 		key: 'getMappedMainData',
-		value: function getMappedMainData(data) {
+		value: function getMappedMainData(data, event) {
 			var _this = this;
 
 			var mappedData = [];
 			this.getDataCollection(data).forEach(function (item) {
 				var dataModel = _this.getModel();
-				_this.executePipeline(dataModel, item, data);
+				_this.executePipeline(dataModel, item, data, event);
 				mappedData.push(dataModel.getData());
 			});
 
@@ -249,11 +249,15 @@ module.exports = function () {
 		}
 	}, {
 		key: 'executePipeline',
-		value: function executePipeline(dataModel, rawData, context) {
+		value: function executePipeline(dataModel) {
+			for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+				args[_key - 1] = arguments[_key];
+			}
+
 			this.pipes.sort(function (a, b) {
 				return a.order > b.order;
 			}).forEach(function (pipeData) {
-				pipeData.pipe(dataModel, rawData, context);
+				pipeData.pipe.apply(pipeData, [dataModel].concat(args));
 			});
 
 			this.cleanDataModel(dataModel);
@@ -1338,7 +1342,7 @@ module.exports = [];
 /***/ (function(module, exports) {
 
 module.exports = function (productImpressionDataModel, productDto) {
-	productImpressionDataModel.id = productDto.id;
+	productImpressionDataModel.id = productDto.productId || productDto.id;
 };
 
 /***/ }),
@@ -1554,18 +1558,16 @@ module.exports = __webpack_require__(11).concat([__webpack_require__(47), __webp
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-module.exports = function (productDataModel, productDto, context) {
-	productDto.properties = productDto.properties || {};
-	if (productDataModel.price) {
-		if (typeof productDataModel.quantity !== 'undefined') {
-			var _filter = [productDto.qtyAdded, productDto.qtyRemoved, productDto.properties.qtyAdded, productDto.properties.qtyRemoved, context.qtyAdded, context.qtyRemoved, productDto.qtyOrdered].filter(function (value) {
-				return typeof value !== 'undefined';
-			});
+module.exports = function (productDataModel, productDto, context, event) {
+	var properties = productDto.properties || {};
+	if (['productClick', 'productDetail'].indexOf(event.event) === -1 && productDataModel.price && typeof productDataModel.quantity !== 'undefined') {
+		var _filter = [productDto.qtyAdded, productDto.qtyRemoved, properties.qtyAdded, properties.qtyRemoved, context.qtyAdded, context.qtyRemoved, productDto.qtyOrdered].filter(function (value) {
+			return typeof value !== 'undefined';
+		});
 
-			var _filter2 = _slicedToArray(_filter, 1);
+		var _filter2 = _slicedToArray(_filter, 1);
 
-			productDataModel.quantity = _filter2[0];
-		}
+		productDataModel.quantity = _filter2[0];
 	} else {
 		delete productDataModel.quantity;
 	}
