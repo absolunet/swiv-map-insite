@@ -1,3 +1,3 @@
 module.exports = (productImpressionDataModel, productDto) => {
-	productImpressionDataModel.id = productDto.id;
+	productImpressionDataModel.id = productDto.productId || productDto.id;
 };
