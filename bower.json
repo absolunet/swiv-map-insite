@@ -41,6 +41,6 @@
     ".travis.yml"
   ],
   "dependencies": {
-    "swiv": "^1.0.0-rc.2"
+    "swiv": "^1.0.0-rc.3"
   }
 }

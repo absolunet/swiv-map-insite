@@ -967,15 +967,17 @@ module.exports = class CheckoutEventModel extends AbstractEventModel {
 		return {
 			event: 'checkout',
 			ecommerce: {
-				actionField: {},
-				products: []
+				checkout: {
+					actionField: {},
+					products: []
+				}
 			},
 			eventCallback: () => {} // eslint-disable-line no-empty-function
 		};
 	}
 
 	getMainDataKey() {
-		return 'ecommerce.products';
+		return 'ecommerce.checkout.products';
 	}
 
 	getMainDataType() {
