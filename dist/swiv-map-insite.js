@@ -1446,8 +1446,8 @@ module.exports = function (productImpressionDataModel, productDto, context) {
 /***/ (function(module, exports) {
 
 var getPricing = function getPricing(productDto) {
-	if (productDto.pricing && productDto.pricing.unitListPrice && (typeof productDto.canShowPrice === 'undefined' || productDto.canShowPrice) && productDto.canAddToCart) {
-		return productDto.pricing.unitListPrice.toFixed(2);
+	if (productDto.pricing && !productDto.pricing.requiresRealTimePrice && productDto.pricing.unitNetPrice && (typeof productDto.canShowPrice === 'undefined' || productDto.canShowPrice) && productDto.canAddToCart) {
+		return productDto.pricing.unitNetPrice.toFixed(2);
 	}
 
 	return undefined;
