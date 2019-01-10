@@ -701,8 +701,8 @@ module.exports = function () {
 			mapper: __webpack_require__(43),
 			defaultPipes: __webpack_require__(44)
 		}, {
-			mapper: __webpack_require__(45),
-			defaultPipes: __webpack_require__(46)
+			mapper: __webpack_require__(48),
+			defaultPipes: __webpack_require__(49)
 		}];
 
 		this.mappers = {};
@@ -1498,6 +1498,15 @@ module.exports = function (_AbstractInsiteMapper) {
 		value: function getModel() {
 			return new PromotionDataModel();
 		}
+	}, {
+		key: 'getDataCollection',
+		value: function getDataCollection(data) {
+			if (data.main) {
+				return data.main instanceof Array ? data.main : [data.main];
+			}
+
+			return data instanceof Array ? data : [data];
+		}
 	}]);
 
 	return InsitePromotionDataModelMapper;
@@ -1505,12 +1514,36 @@ module.exports = function (_AbstractInsiteMapper) {
 
 /***/ }),
 /* 44 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = [];
+module.exports = [__webpack_require__(45), __webpack_require__(46), __webpack_require__(47)];
 
 /***/ }),
 /* 45 */
+/***/ (function(module, exports) {
+
+module.exports = function (promotionDataModel, promotionDto) {
+	promotionDataModel.id = promotionDto.id;
+};
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports) {
+
+module.exports = function (promotionDataModel, promotionDto) {
+	promotionDataModel.name = promotionDto.promotionCode || promotionDto.name;
+};
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports) {
+
+module.exports = function (promotionDataModel) {
+	promotionDataModel.position = 'checkout';
+};
+
+/***/ }),
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1549,13 +1582,13 @@ module.exports = function (_ImpressionMapper) {
 }(ImpressionMapper);
 
 /***/ }),
-/* 46 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(11).concat([__webpack_require__(47), __webpack_require__(48)]);
+module.exports = __webpack_require__(11).concat([__webpack_require__(50), __webpack_require__(51)]);
 
 /***/ }),
-/* 47 */
+/* 50 */
 /***/ (function(module, exports) {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -1576,7 +1609,7 @@ module.exports = function (productDataModel, productDto, context, event) {
 };
 
 /***/ }),
-/* 48 */
+/* 51 */
 /***/ (function(module, exports) {
 
 module.exports = function (productDataModel) {

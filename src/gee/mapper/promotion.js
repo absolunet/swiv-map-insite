@@ -7,4 +7,12 @@ module.exports = class InsitePromotionDataModelMapper extends AbstractInsiteMapp
 		return new PromotionDataModel();
 	}
 
+	getDataCollection(data) {
+		if (data.main) {
+			return data.main instanceof Array ? data.main : [data.main];
+		}
+
+		return data instanceof Array ? data : [data];
+	}
+
 };
