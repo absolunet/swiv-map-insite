@@ -60,18 +60,129 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+const AbstractModel = __webpack_require__(8);
+const NotImplementedError = __webpack_require__(3).default;
+const resolve = __webpack_require__(21);
+const filter = __webpack_require__(22);
+let _configs;
+
+module.exports = class AbstractEventModel extends AbstractModel {
+
+	constructor() {
+		super();
+		this.mainDataType = Object;
+		_configs = _configs || __webpack_require__(9);
+	}
+
+	setMainData(data = {}) {
+		const keyList = this.getMainDataKey().split('.');
+		const lastKey = keyList.pop();
+		const key = keyList.join('.');
+		const container = resolve(key, this) || {};
+
+		if (container) {
+			const isOfMainType = data.constructor !== Array ? this.isOfMainType(data) : data.every((d) => {
+				return this.isOfMainType(d);
+			});
+
+			if (!isOfMainType) {
+				if (_configs.get('debug', false)) {
+					// eslint-disable-next-line no-console
+					console.warn(`The main data does not fit the expected type: ${this.getMainDataType().name}`);
+				}
+			}
+			if (container[lastKey] && container[lastKey].constructor === Array && data.constructor !== Array) {
+				container[lastKey].push(data);
+			} else {
+				container[lastKey] = data;
+			}
+		}
+	}
+
+	getMainDataKey() {
+		if (this.mainDataKey) {
+			return this.mainDataKey;
+		}
+
+		throw new NotImplementedError();
+	}
+
+	getMainDataType() {
+		return this.mainDataType || Object;
+	}
+
+	isOfMainType(data) {
+		return Object.keys(filter((new (this.getMainDataType())()).getRequiredFields(), (val, key) => {
+			return typeof val === 'function' ? val(key, this) : Boolean(val);
+		})).every((key) => {
+			return typeof data[key] === 'boolean' || data[key];
+		});
+	}
+
+	getWhitelistedFunctions() {
+		return ['eventCallback'];
+	}
+
+	getEventName() {
+		const cleanName = this.modelName.replace(/(Event)?Model$/, '');
+
+		return `${cleanName.charAt(0).toLowerCase()}${cleanName.slice(1)}`;
+	}
+
+};
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const ImpressionDataModel = __webpack_require__(6);
+
+module.exports = class ProductDataModel extends ImpressionDataModel {
+
+	static get modelName() {
+		return 'ProductDataModel';
+	}
+
+	getDefaultModelData() {
+		const data = super.getDefaultModelData();
+		const additionalData = {
+			quantity: 1,
+			coupon: ''
+		};
+
+		Object.keys(additionalData).forEach((k) => {
+			data[k] = additionalData[k];
+		});
+
+		return data;
+	}
+
+};
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var NotImplementedError = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"swiv/src/gee/error/not-implemented\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+var NotImplementedError = __webpack_require__(3);
 // const resolve = require('swiv/src/utils/resolve');
 
 module.exports = function () {
@@ -181,7 +292,283 @@ module.exports = function () {
 }();
 
 /***/ }),
-/* 1 */
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = class NotImplementedError extends Error {
+
+	constructor(method) {
+		// eslint-disable-next-line no-caller
+		super(`Method ${(method || arguments.callee.caller.name)}() must be implemented.`);
+	}
+
+};
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractDataModel = __webpack_require__(5);
+
+module.exports = class ActionFieldDataModel extends AbstractDataModel {
+
+	static get modelName() {
+		return 'ActionFieldDataModel';
+	}
+
+};
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractModel = __webpack_require__(8);
+
+module.exports = class AbstractDataModel extends AbstractModel {
+
+	getRequiredFields() {
+		return {};
+	}
+
+};
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractDataModel = __webpack_require__(5);
+
+module.exports = class ImpressionDataModel extends AbstractDataModel {
+
+	static get modelName() {
+		return 'ImpressionDataModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			name: '',
+			id: '',
+			brand: '',
+			category: '',
+			variant: '',
+			list: '',
+			position: 1,
+			price: 0
+		};
+	}
+
+	getRequiredFields() {
+		return {
+			id: (product) => {
+				return !product.name;
+			},
+			name: (product) => {
+				return !product.id;
+			}
+		};
+	}
+
+};
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractDataModel = __webpack_require__(5);
+
+module.exports = class PromotionDataModel extends AbstractDataModel {
+
+	static get modelName() {
+		return 'PromotionDataModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			id: '',
+			name: '',
+			creative: '',
+			position: ''
+		};
+	}
+
+	getRequiredFields() {
+		return {
+			id: (promotion, event) => {
+				return ['purchase', 'refund'].indexOf(event.modelName) !== -1;
+			}
+		};
+	}
+
+};
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const NotImplementedError = __webpack_require__(3);
+let _configs;
+
+module.exports = class AbstractModel {
+
+	static get modelName() {
+		throw new NotImplementedError();
+	}
+
+	constructor(data = {}) {
+		_configs = _configs || __webpack_require__(9);
+		this.map(this.getDefaultModelData()).map(data);
+	}
+
+	map(data) {
+		for (const prop in data) {
+			if (typeof data[prop] !== 'undefined') {
+				this.set(prop, data[prop], data);
+			}
+		}
+
+		return this;
+	}
+
+	set(prop, value, context) {
+		this[prop] = this.mapPropertyValue(prop, value, context);
+
+		return this;
+	}
+
+	getData() {
+		const data = {};
+		const whitelistedFunctions = this.getWhitelistedFunctions();
+
+		for (const prop in this) {
+			if (typeof this[prop] !== 'undefined') {
+				const type = typeof this[prop];
+
+				if (type !== 'undefined' && (typeof this[prop] !== 'function' || whitelistedFunctions.indexOf(prop) !== -1)) {
+					data[prop] = this[prop];
+				}
+			}
+		}
+
+		return data;
+	}
+
+	getConfigRepository() {
+		return _configs;
+	}
+
+	getWhitelistedFunctions() {
+		return [];
+	}
+
+	mapPropertyValue(prop, value, context = {}) { // eslint-disable-line no-unused-vars
+		return value;
+	}
+
+	getDefaultModelData() {
+		return {};
+	}
+
+	get modelName() {
+		return this.constructor.modelName;
+	}
+
+};
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const defaultConfigs = __webpack_require__(19);
+
+const _config = {};
+
+class ConfigRepository {
+
+	get(key, defaultValue = null) {
+		return this.has(key) ? _config[key] : defaultValue;
+	}
+
+	set(key, value) {
+		_config[key] = value;
+
+		if (!(Object.getOwnPropertyDescriptor(this, key) || {}).get) {
+			Object.defineProperty(this, key, {
+				get: function() {
+					return this.get(key);
+				},
+				set: function(v) {
+					this.set(key, v);
+				}
+			});
+		}
+
+		return this;
+	}
+
+	has(key) {
+		return typeof _config[key] !== 'undefined';
+	}
+
+	remove(key) {
+		delete _config[key];
+
+		return this;
+	}
+
+	all() {
+		const constantsCopy = {};
+
+		for (const key in _config) {
+			if (typeof _config[key] !== 'undefined') {
+				constantsCopy[key] = _config[key];
+			}
+		}
+
+		return constantsCopy;
+	}
+
+}
+
+const configs = new ConfigRepository();
+
+for (const key in defaultConfigs) {
+	if (defaultConfigs[key]) {
+		configs.set(key, defaultConfigs[key]);
+	}
+}
+
+module.exports = configs;
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -194,8 +581,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var AbstractInsiteMapper = __webpack_require__(0);
-var ImpressionDataModel = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"swiv/src/gee/model/data/impression\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+var AbstractInsiteMapper = __webpack_require__(2);
+var ImpressionDataModel = __webpack_require__(6);
 
 module.exports = function (_AbstractInsiteMapper) {
 	_inherits(InsiteProductDataModelMapper, _AbstractInsiteMapper);
@@ -240,41 +627,41 @@ module.exports = function (_AbstractInsiteMapper) {
 }(AbstractInsiteMapper);
 
 /***/ }),
-/* 2 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = [__webpack_require__(11), __webpack_require__(12), __webpack_require__(13), __webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18)];
+module.exports = [__webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42)];
 
 /***/ }),
-/* 3 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(4);
+module.exports = __webpack_require__(13);
 
 
 /***/ }),
-/* 4 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(5);
+__webpack_require__(14);
 
 /***/ }),
-/* 5 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(6);
+__webpack_require__(15);
 
 /***/ }),
-/* 6 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(7)();
+__webpack_require__(16)();
 
 /***/ }),
-/* 7 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var InsiteMapperService = __webpack_require__(8);
+var InsiteMapperService = __webpack_require__(17);
 var hasBooted = false;
 
 var boot = function boot() {
@@ -289,7 +676,7 @@ window.addEventListener('swiv.gee.ready', boot);
 module.exports = boot;
 
 /***/ }),
-/* 8 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -305,17 +692,17 @@ module.exports = function () {
 		_classCallCheck(this, InsiteMapperService);
 
 		var mappers = [{
-			mapper: __webpack_require__(9),
-			defaultPipes: __webpack_require__(10)
+			mapper: __webpack_require__(18),
+			defaultPipes: __webpack_require__(34)
 		}, {
-			mapper: __webpack_require__(1),
-			defaultPipes: __webpack_require__(2)
+			mapper: __webpack_require__(10),
+			defaultPipes: __webpack_require__(11)
 		}, {
-			mapper: __webpack_require__(19),
-			defaultPipes: __webpack_require__(20)
+			mapper: __webpack_require__(43),
+			defaultPipes: __webpack_require__(44)
 		}, {
-			mapper: __webpack_require__(24),
-			defaultPipes: __webpack_require__(25)
+			mapper: __webpack_require__(48),
+			defaultPipes: __webpack_require__(49)
 		}];
 
 		this.mappers = {};
@@ -389,7 +776,7 @@ module.exports = function () {
 }();
 
 /***/ }),
-/* 9 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -400,8 +787,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var AbstractInsiteMapper = __webpack_require__(0);
-var ActionFieldDataModel = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"swiv/src/gee/model/data/action-field\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+var AbstractInsiteMapper = __webpack_require__(2);
+var ActionFieldDataModel = __webpack_require__(4);
 
 module.exports = function (_AbstractInsiteMapper) {
 	_inherits(InsiteActionFieldDataModelMapper, _AbstractInsiteMapper);
@@ -428,13 +815,532 @@ module.exports = function (_AbstractInsiteMapper) {
 }(AbstractInsiteMapper);
 
 /***/ }),
-/* 10 */
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+	dataLayer: 'dataLayer',
+	gtm: 'google_tag_manager',
+	eventPrefix: 'swiv.gee.',
+	events: [
+		__webpack_require__(20),
+		__webpack_require__(23),
+		__webpack_require__(24),
+		__webpack_require__(25),
+		__webpack_require__(26),
+		__webpack_require__(27),
+		__webpack_require__(28),
+		__webpack_require__(29),
+		__webpack_require__(30),
+		__webpack_require__(31),
+		__webpack_require__(32),
+		__webpack_require__(33)
+	]
+};
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractEventModel = __webpack_require__(0);
+
+module.exports = class DefaultEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'DefaultEventModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			ecommerce: {}
+		};
+	}
+
+	getMainDataKey() {
+		return 'ecommerce';
+	}
+
+	getMainDataType() {
+		return Object;
+	}
+
+};
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = (path, obj = {}) => {
+	return path.split('.').reduce((prev, curr) => {
+		return prev ? prev[curr] : undefined;
+	}, obj);
+};
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = (obj, predicate) => {
+	const result = {};
+
+	Object.keys(obj).forEach((key) => {
+		if (predicate(obj[key], key)) {
+			result[key] = obj[key];
+		}
+	});
+
+	return result;
+};
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractEventModel = __webpack_require__(0);
+const ProductModel = __webpack_require__(1);
+
+module.exports = class AddToCartEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'AddToCartEventModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			event: 'addToCart',
+			ecommerce: {
+				currencyCode: this.getConfigRepository().get('currencyCode', 'USD'),
+				add: {
+					products: []
+				}
+			}
+		};
+	}
+
+	getMainDataKey() {
+		return 'ecommerce.add.products';
+	}
+
+	getMainDataType() {
+		return ProductModel;
+	}
+
+};
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractEventModel = __webpack_require__(0);
+const ProductModel = __webpack_require__(1);
+
+module.exports = class CheckoutEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'CheckoutEventModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			event: 'checkout',
+			ecommerce: {
+				checkout: {
+					actionField: {},
+					products: []
+				}
+			},
+			eventCallback: () => {} // eslint-disable-line no-empty-function
+		};
+	}
+
+	getMainDataKey() {
+		return 'ecommerce.checkout.products';
+	}
+
+	getMainDataType() {
+		return ProductModel;
+	}
+
+};
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractEventModel = __webpack_require__(0);
+const ActionFieldModel = __webpack_require__(4);
+
+module.exports = class CheckoutOptionEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'CheckoutOptionEventModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			event: 'checkoutOption',
+			ecommerce: {
+				checkout_option: { // eslint-disable-line camelcase
+					actionField: {}
+				}
+			}
+		};
+	}
+
+	getMainDataKey() {
+		return 'ecommerce.checkout_option.actionField';
+	}
+
+	getMainDataType() {
+		return ActionFieldModel;
+	}
+
+};
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractEventModel = __webpack_require__(0);
+const ImpressionDataModel = __webpack_require__(6);
+
+module.exports = class ProductImpressionEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'ProductImpressionEventModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			event: 'productImpression',
+			ecommerce: {
+				currencyCode: this.getConfigRepository().get('currencyCode', 'USD'),
+				impressions: []
+			}
+		};
+	}
+
+	getMainDataKey() {
+		return 'ecommerce.impressions';
+	}
+
+	getMainDataType() {
+		return ImpressionDataModel;
+	}
+
+};
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractEventModel = __webpack_require__(0);
+const ProductModel = __webpack_require__(1);
+
+module.exports = class ProductClickEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'ProductClickEventModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			event: 'productClick',
+			ecommerce: {
+				click: {
+					actionField: {},
+					products: []
+				}
+			},
+			eventCallback: () => {} // eslint-disable-line no-empty-function
+		};
+	}
+
+	getMainDataKey() {
+		return 'ecommerce.click.products';
+	}
+
+	getMainDataType() {
+		return ProductModel;
+	}
+
+};
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractEventModel = __webpack_require__(0);
+const ProductModel = __webpack_require__(1);
+
+module.exports = class ProductDetailEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'ProductDetailEventModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			event: 'productDetail',
+			ecommerce: {
+				detail: {
+					actionField: {},
+					products: []
+				}
+			}
+		};
+	}
+
+	getMainDataKey() {
+		return 'ecommerce.detail.products';
+	}
+
+	getMainDataType() {
+		return ProductModel;
+	}
+
+};
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractEventModel = __webpack_require__(0);
+const PromotionModel = __webpack_require__(7);
+
+module.exports = class PromoClickEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'PromoClickEventModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			event: 'promotionClick',
+			ecommerce: {
+				promoClick: {
+					promotions: []
+				}
+			},
+			eventCallback: () => {} // eslint-disable-line no-empty-function
+		};
+	}
+
+	getMainDataKey() {
+		return 'ecommerce.promoClick.promotions';
+	}
+
+	getMainDataType() {
+		return PromotionModel;
+	}
+
+};
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractEventModel = __webpack_require__(0);
+const PromotionModel = __webpack_require__(7);
+
+module.exports = class PromoViewEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'PromoViewEventModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			event: 'promotionView',
+			ecommerce: {
+				promoView: {
+					promotions: []
+				}
+			}
+		};
+	}
+
+	getMainDataKey() {
+		return 'ecommerce.promoView.promotions';
+	}
+
+	getMainDataType() {
+		return PromotionModel;
+	}
+
+};
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractEventModel = __webpack_require__(0);
+const ProductDataModel = __webpack_require__(1);
+
+module.exports = class PurchaseEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'PurchaseEventModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			event: 'purchase',
+			ecommerce: {
+				purchase: {
+					actionField: {},
+					products: []
+				}
+			}
+		};
+	}
+
+	getMainDataKey() {
+		return 'ecommerce.purchase.products';
+	}
+
+	getMainDataType() {
+		return ProductDataModel;
+	}
+
+};
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractEventModel = __webpack_require__(0);
+const ActionFieldModel = __webpack_require__(4);
+
+module.exports = class RefundEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'RefundEventModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			event: 'refund',
+			ecommerce: {
+				refund: {
+					actionField: new ActionFieldModel()
+				}
+			}
+		};
+	}
+
+	getMainDataKey() {
+		return 'ecommerce.refund.actionField';
+	}
+
+	getMainDataType() {
+		return ActionFieldModel;
+	}
+
+};
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AbstractEventModel = __webpack_require__(0);
+const ProductModel = __webpack_require__(1);
+
+module.exports = class RemoveFromCartEventModel extends AbstractEventModel {
+
+	static get modelName() {
+		return 'RemoveFromCartEventModel';
+	}
+
+	getDefaultModelData() {
+		return {
+			event: 'removeFromCart',
+			ecommerce: {
+				remove: {
+					products: []
+				}
+			}
+		};
+	}
+
+	getMainDataKey() {
+		return 'ecommerce.remove.products';
+	}
+
+	getMainDataType() {
+		return ProductModel;
+	}
+
+};
+
+
+/***/ }),
+/* 34 */
 /***/ (function(module, exports) {
 
 module.exports = [];
 
 /***/ }),
-/* 11 */
+/* 35 */
 /***/ (function(module, exports) {
 
 module.exports = function (productImpressionDataModel, productDto) {
@@ -442,7 +1348,7 @@ module.exports = function (productImpressionDataModel, productDto) {
 };
 
 /***/ }),
-/* 12 */
+/* 36 */
 /***/ (function(module, exports) {
 
 module.exports = function (productImpressionDataModel, productDto) {
@@ -450,7 +1356,7 @@ module.exports = function (productImpressionDataModel, productDto) {
 };
 
 /***/ }),
-/* 13 */
+/* 37 */
 /***/ (function(module, exports) {
 
 module.exports = function (productImpressionDataModel, productDto, context) {
@@ -458,17 +1364,17 @@ module.exports = function (productImpressionDataModel, productDto, context) {
 };
 
 /***/ }),
-/* 14 */
+/* 38 */
 /***/ (function(module, exports) {
 
 module.exports = function (productImpressionDataModel, productDto) {
 	if (productDto.properties) {
-		productImpressionDataModel.brand = productDto.properties.brand;
+		productImpressionDataModel.brand = productDto.brand.name;
 	}
 };
 
 /***/ }),
-/* 15 */
+/* 39 */
 /***/ (function(module, exports) {
 
 var resolveCategory = function resolveCategory(productDto, context) {
@@ -500,7 +1406,7 @@ module.exports = function (productImpressionDataModel, productDto, context) {
 };
 
 /***/ }),
-/* 16 */
+/* 40 */
 /***/ (function(module, exports) {
 
 var getPositionFromPagination = function getPositionFromPagination(pagination, products, productDto) {
@@ -536,7 +1442,7 @@ module.exports = function (productImpressionDataModel, productDto, context) {
 };
 
 /***/ }),
-/* 17 */
+/* 41 */
 /***/ (function(module, exports) {
 
 var getPricing = function getPricing(productDto) {
@@ -552,7 +1458,7 @@ module.exports = function (productImpressionDataModel, productDto) {
 };
 
 /***/ }),
-/* 18 */
+/* 42 */
 /***/ (function(module, exports) {
 
 module.exports = function (productImpressionDataModel, productDto) {
@@ -564,7 +1470,7 @@ module.exports = function (productImpressionDataModel, productDto) {
 };
 
 /***/ }),
-/* 19 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -575,8 +1481,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var AbstractInsiteMapper = __webpack_require__(0);
-var PromotionDataModel = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"swiv/src/gee/model/data/promotion\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+var AbstractInsiteMapper = __webpack_require__(2);
+var PromotionDataModel = __webpack_require__(7);
 
 module.exports = function (_AbstractInsiteMapper) {
 	_inherits(InsitePromotionDataModelMapper, _AbstractInsiteMapper);
@@ -607,13 +1513,13 @@ module.exports = function (_AbstractInsiteMapper) {
 }(AbstractInsiteMapper);
 
 /***/ }),
-/* 20 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = [__webpack_require__(21), __webpack_require__(22), __webpack_require__(23)];
+module.exports = [__webpack_require__(45), __webpack_require__(46), __webpack_require__(47)];
 
 /***/ }),
-/* 21 */
+/* 45 */
 /***/ (function(module, exports) {
 
 module.exports = function (promotionDataModel, promotionDto) {
@@ -621,7 +1527,7 @@ module.exports = function (promotionDataModel, promotionDto) {
 };
 
 /***/ }),
-/* 22 */
+/* 46 */
 /***/ (function(module, exports) {
 
 module.exports = function (promotionDataModel, promotionDto) {
@@ -629,7 +1535,7 @@ module.exports = function (promotionDataModel, promotionDto) {
 };
 
 /***/ }),
-/* 23 */
+/* 47 */
 /***/ (function(module, exports) {
 
 module.exports = function (promotionDataModel) {
@@ -637,7 +1543,7 @@ module.exports = function (promotionDataModel) {
 };
 
 /***/ }),
-/* 24 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -648,8 +1554,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var ImpressionMapper = __webpack_require__(1);
-var ProductDataModel = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"swiv/src/gee/model/data/product\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+var ImpressionMapper = __webpack_require__(10);
+var ProductDataModel = __webpack_require__(1);
 
 module.exports = function (_ImpressionMapper) {
 	_inherits(InsiteProductDataModelMapper, _ImpressionMapper);
@@ -676,13 +1582,13 @@ module.exports = function (_ImpressionMapper) {
 }(ImpressionMapper);
 
 /***/ }),
-/* 25 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(2).concat([__webpack_require__(26), __webpack_require__(27)]);
+module.exports = __webpack_require__(11).concat([__webpack_require__(50), __webpack_require__(51)]);
 
 /***/ }),
-/* 26 */
+/* 50 */
 /***/ (function(module, exports) {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -703,7 +1609,7 @@ module.exports = function (productDataModel, productDto, context, event) {
 };
 
 /***/ }),
-/* 27 */
+/* 51 */
 /***/ (function(module, exports) {
 
 module.exports = function (productDataModel) {
