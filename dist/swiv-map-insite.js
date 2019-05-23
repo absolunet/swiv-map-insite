@@ -1368,7 +1368,7 @@ module.exports = function (productImpressionDataModel, productDto, context) {
 /***/ (function(module, exports) {
 
 module.exports = function (productImpressionDataModel, productDto) {
-	if (productDto.properties) {
+	if (productDto.brand) {
 		productImpressionDataModel.brand = productDto.brand.name;
 	}
 };
